@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: http://mayf3.github.io/sitemap.xml
