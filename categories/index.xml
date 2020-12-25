@@ -5,6 +5,16 @@
     <link>http://mayf3.github.io/categories/</link>
     <description>Recent content in Categories on My Home</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language><atom:link href="http://mayf3.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 25 Oct 2020 09:28:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>machine-learning</title>
+      <link>http://mayf3.github.io/categories/machine-learning/</link>
+      <pubDate>Sun, 25 Oct 2020 09:28:00 +0800</pubDate>
+      
+      <guid>http://mayf3.github.io/categories/machine-learning/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

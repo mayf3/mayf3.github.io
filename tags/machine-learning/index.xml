@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>machine-learning on My Home</title>
+    <link>http://mayf3.github.io/tags/machine-learning/</link>
+    <description>Recent content in machine-learning on My Home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 25 Oct 2020 09:28:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>初次尝试K近邻算法</title>
+      <link>http://mayf3.github.io/post/knn/</link>
+      <pubDate>Sun, 25 Oct 2020 09:28:00 +0800</pubDate>
+      
+      <guid>http://mayf3.github.io/post/knn/</guid>
+      <description>什么是k近邻算法 k近邻算法，是基本的分类与回归算法，不过这里也只讨论分类问题。 k近邻算法的思想很简单，对于每一个样本，会在训练数据里寻找与样</description>
+    </item>
+    
+  </channel>
+</rss>
