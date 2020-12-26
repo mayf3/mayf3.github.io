@@ -69,7 +69,7 @@
 <meta itemprop="description" content="什么是knn knn是Cover和Hart在1968年的论文里提出的分类算法，全名叫K Nearest Neighbor，中文翻译是k近邻算法。 knn的思想很">
 <meta itemprop="datePublished" content="2020-10-25T09:28:00+08:00" />
 <meta itemprop="dateModified" content="2020-10-26T21:38:00+08:00" />
-<meta itemprop="wordCount" content="2146">
+<meta itemprop="wordCount" content="2182">
 
 
 
@@ -279,12 +279,8 @@
     </li>
     <li><a href="#knn有哪些实现">knn有哪些实现</a></li>
     <li><a href="#knn的优缺点">knn的优缺点</a></li>
-    <li><a href="#knn的实际应用">knn的实际应用</a></li>
-    <li><a href="#knn的常见问题">knn的常见问题</a>
-      <ul>
-        <li><a href="#归一化">归一化</a></li>
-      </ul>
-    </li>
+    <li><a href="#归一化">归一化</a></li>
+    <li><a href="#knn的尝试">knn的尝试</a></li>
     <li><a href="#参考资料">参考资料</a></li>
   </ul>
 </nav>
@@ -299,7 +295,7 @@ knn的思想很简单，核心假设是同类别的样本在特征空间上的�
 基于这个思想，knn对每一个样本，会在训练集中找出与该样本距离最接近的k个样本，取这k个样本中出现次数最多的类别作为该样本的分类结果。</p>
 <p>用下面的例子来简单介绍一下knn，假设有10个训练数据，如下图，蓝三角形和绿圆形分别表示不同的类别：
 <img src="/knn/DEBCF616-2EB5-42C7-9CA2-0B7C2F1BC9F5.png" alt="c44f2e1029eaa562953dbbd709b5846b">
-若我们想得到下图红点的类别，假定k为3，则我们在训练样本中找最近的3个样本，即红色圆圈内有的两个蓝三角形和一个绿圆形，于是我们将红点分类为多数类，即蓝三角。
+若我们想得到下图红点的类别，假定k为3，则我们在训练样本中找最近的3个样本，即红色圆圈内有的两个蓝三角形和一个绿圆形，于是我们将红点分类红色圆圈内出现次数最多的类别，即蓝三角。
 <img src="/knn/B4D9B651-D5A7-4A37-87A6-0AF9614DED62.png" alt="c9d5a145e64e0655c315dff4cc5661a4"></p>
 <h2 id="knn有哪些参数">knn有哪些参数</h2>
 <p>knn的模型主要由下面三个要素决定：</p>
@@ -335,10 +331,11 @@ L_\infty = \max_i|X_i - Y_i|
 $$</p>
 <h3 id="分类决策规则">分类决策规则</h3>
 <p>knn的分类决策规则往往是多数表决，由距离最近的k个样本的多数类决定测试样本的类别。多数表决规则其实等价于经验风险最小化。<br>
-其实还有其他方案，比如将这k个样本按照距离进行加权平均（该规则也能用来回归）等等。</p>
+其实还有其他方案，比如将这k个样本按照距离进行平均或则加权平均（该规则也能在回归任务上）等等。</p>
 <h2 id="knn有哪些实现">knn有哪些实现</h2>
-<p>knn算法的难点是如何快速在训练集里找到距离前k小的样本，最简单的实现是线性扫描，对于测试样本，计算该样本到所有训练样本的距离，排序取前k个。<br>
-另外一种常见的实现方法是采用kd树，这里就不展开介绍了，在数据随机且维度不大的情况下，kd树的复杂度会优于线性扫描，但如果维度接近于样本数量，则kd树约等于线性扫描。</p>
+<p>knn算法的难点是如何快速在训练集里找到距离前k小的样本，最简单的实现是线性扫描，对于测试样本，计算该样本到所有训练样本的距离，排序取前k个。</p>
+<p>另外一种常见的实现方法是采用kd树，这里就不展开介绍了，可以参考这个<a href="https://www.cnblogs.com/maxlpy/p/4297254.html">文章</a>。
+在数据随机且维度不大的情况下，kd树的复杂度会优于线性扫描，但如果维度接近于样本数量，则kd树约等于线性扫描。</p>
 <h2 id="knn的优缺点">knn的优缺点</h2>
 <p>k近邻算法的优点如下：</p>
 <ol>
@@ -354,16 +351,7 @@ $$</p>
 <li>计算复杂度高</li>
 <li>空间复杂度高</li>
 </ol>
-<h2 id="knn的实际应用">knn的实际应用</h2>
-<p>我在<a href="https://github.com/mayf3/machine_learning/tree/master/algorithm/knn">gihtub仓库</a>里实现了knn的线性扫描版本和kd树版本，拿mnist和鸢尾花卉数据集来评估knn的性能。<br>
-结果发现knn的算法虽然简单，但效果确实还挺好，mnist的准确率有94%以上，鸢尾花卉的准确率也有93%(42/45)。<br>
-此外我也在鸢尾花卉数据集上尝试对特征进行归一化，用min-max归一化算法后准确率达到95%(43/45)，用z-score归一化后准确率达到98%(44/45)。</p>
-<p>但knn有一个显著的问题，就是运行效率低，特别是在mnist数据集上，1w的测试数据，6w的训练数据，特征数量有28^2=784个。<br>
-如果用线性扫描法，则总的运算量达到1w * 6w * 784，假设计算机每秒运算量为10^8，也需要4707秒，超过一个小时。<br>
-尝试用kd树来优化knn，结果其性能反而比线性扫描还差。</p>
-<p>如果想针对knn的效率问题进行优化，之后可以尝试一下非精确的knn算法，或则是对数据进行降维。</p>
-<h2 id="knn的常见问题">knn的常见问题</h2>
-<h3 id="归一化">归一化</h3>
+<h2 id="归一化">归一化</h2>
 <p>knn使用的是欧式距离，欧式距离对数据的尺度很敏感，比如下面的例子：</p>
 <blockquote>
 <p>假定身高的单位为米，体重的单位为克，很明显这两者在尺度上就有巨大的差异。<br>
@@ -383,6 +371,14 @@ $$</p>
 <p>当我在尝试knn算法的时候，也很好奇这两种归一化算法的优劣，然后就搜到了这篇<a href="http://j.mecs-press.net/ijcnis/ijcnis-v9-n11/IJCNIS-V9-N11-4.pdf">论文</a>。<br>
 从论文里给出的对比效果来看，似乎min-max的要比z-score略好一点：
 <img src="/knn/B4491EA5-817E-4F13-8994-50BE70C206D2.png" alt="427ee4485988d610a448fa4f96101bfd"></p>
+<h2 id="knn的尝试">knn的尝试</h2>
+<p>我在<a href="https://github.com/mayf3/machine_learning/tree/master/algorithm/knn">gihtub仓库</a>里实现了knn的线性扫描版本和kd树版本，拿mnist和鸢尾花卉数据集来评估knn的性能。<br>
+结果发现knn的算法虽然简单，但效果确实还挺好，mnist的准确率有94%以上，鸢尾花卉的准确率也有93%(正确分类42个/总数45个)。<br>
+此外我也在鸢尾花卉数据集上尝试对特征进行归一化，用min-max归一化算法后准确率达到95%(43/45)，用z-score归一化后准确率达到98%(44/45)。</p>
+<p>但knn有一个显著的问题，就是运行效率低，特别是在mnist数据集上，1w的测试数据，6w的训练数据，特征数量有28 * 28=784个。<br>
+如果用线性扫描法，则总的运算量达到1w * 6w * 784，假设计算机每秒运算量为10的8次方，也需要4707秒，超过一个小时。<br>
+尝试用kd树来优化knn，结果其性能反而比线性扫描还差。</p>
+<p>如果想针对knn的效率问题进行优化，之后可以尝试一下非精确的knn算法，或则是对数据进行降维。</p>
 <h2 id="参考资料">参考资料</h2>
 <p>机器学习实战 第二章 k-近邻算法<br>
 机器学习 第十章 降维与度量学习<br>
@@ -390,7 +386,8 @@ $$</p>
 特征工程入门与实践 第三章 特征增强：清洗数据 - 3.3 标准化和归一化<br>
 <a href="https://pdfs.semanticscholar.org/a3c7/50febe8e72a1e377fbae1a723768b233e9e9.pdf?_ga=2.260660749.1635069309.1608960216-652721388.1605965658">Nearest Neighbor Pattern Classification</a><br>
 <a href="http://scott.fortmann-roe.com/docs/BiasVariance.html">Understanding the Bias-Variance Tradeoff</a><br>
-<a href="http://j.mecs-press.net/ijcnis/ijcnis-v9-n11/IJCNIS-V9-N11-4.pdf">Comparative Analysis of KNN Algorithm using Various Normalization Techniques</a></p>
+<a href="http://j.mecs-press.net/ijcnis/ijcnis-v9-n11/IJCNIS-V9-N11-4.pdf">Comparative Analysis of KNN Algorithm using Various Normalization Techniques</a><br>
+<a href="https://www.cnblogs.com/maxlpy/p/4297254.html">k-d tree算法详解</a>。</p>
 
     </div>
 
