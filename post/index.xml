@@ -6,11 +6,20 @@
     <description>Recent content in Posts on My Home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 25 Oct 2020 09:28:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Jan 2021 19:46:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>简介感知机算法</title>
+      <link>http://mayf3.github.io/post/perceptron/</link>
+      <pubDate>Sat, 02 Jan 2021 19:46:00 +0800</pubDate>
+      
+      <guid>http://mayf3.github.io/post/perceptron/</guid>
+      <description>先放一张感知机的思维导图，下面的内容都是围绕着这张图介绍的。 什么是感知机模型 感知机是Rosenblatt在1958年的论文里提出的模型，该模</description>
+    </item>
+    
     <item>
       <title>简介knn算法</title>
       <link>http://mayf3.github.io/post/knn/</link>
-      <pubDate>Sun, 25 Oct 2020 09:28:00 +0800</pubDate>
+      <pubDate>Fri, 25 Dec 2020 09:28:00 +0800</pubDate>
       
       <guid>http://mayf3.github.io/post/knn/</guid>
       <description>什么是knn knn是Cover和Hart在1968年的论文里提出的分类算法，全名叫K Nearest Neighbor，中文翻译是k近邻算法。 knn的思想很</description>
