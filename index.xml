@@ -1,47 +1,721 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>My Home</title>
-    <link>http://mayf3.github.io/</link>
-    <description>Recent content on My Home</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Sat, 02 Jan 2021 19:46:00 +0800</lastBuildDate>
-    
-        <atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>简介感知机算法</title>
-      <link>http://mayf3.github.io/post/perceptron/</link>
-      <pubDate>Sat, 02 Jan 2021 19:46:00 +0800</pubDate>
-      
-      <guid>http://mayf3.github.io/post/perceptron/</guid>
-      
-        <description>&lt;p&gt;先放一张感知机的思维导图，下面的内容都是围绕着这张图介绍的。
-&lt;img src=&#34;http://mayf3.github.io/perceptron/B140FD45-6D28-491D-A781-3446CF0E351C.png&#34; alt=&#34;8f7e79ba13c997cc8fd9eb2de6ecce6c&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;什么是感知机模型&#34;&gt;什么是感知机模型&lt;/h2&gt;
-&lt;p&gt;感知机是Rosenblatt在1958年的&lt;a href=&#34;http://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf&#34;&gt;论文&lt;/a&gt;里提出的模型，该模型是支持向量机和神经网络的基础。&lt;/p&gt;
-&lt;p&gt;该模型主要的思想很简单，就是要找出一条直线（N维情况下就是N-1维超平面）把正样本和负样本完全分开，如下图：
-&lt;img src=&#34;http://mayf3.github.io/perceptron/451850DE-7A91-4D36-9782-FFD19AB4BB8C.png&#34; alt=&#34;592a6df086d6369342f3d7d8a5be1172&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;模型&#34;&gt;模型&lt;/h2&gt;
-&lt;p&gt;感知机模型的形式如下，其中w和b为参数:
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Fri, 07 Aug 2026 08:00:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Agent 鉴权体系设计：协作的地基</title><link>http://mayf3.github.io/post/2026-08-07-agent-auth-system-design/</link><pubDate>Fri, 07 Aug 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-07-agent-auth-system-design/</guid><description>&lt;h2 id="数字员工也需要工牌">数字员工也需要工牌&lt;/h2>
+&lt;p>每天早上，78 个 Agent 同时上线。有的推进工作流节点，有的管理 OKR 进度，有的在论坛讨论问题，有的审稿，有的发布文档。它们不坐工位、不领工资，但干的活和人类同事一样实打实。&lt;/p>
+&lt;p>人类员工上班第一天，先领工牌，上面写着名字和工号，进门刷卡靠它。数字员工也一样：要进系统干活，第一件事是拿到属于自己的身份。&lt;/p>
+&lt;p>所以，给 Agent 做鉴权，本质上就是在办三件事，对应三个问题：&lt;/p>
+&lt;ul>
+&lt;li>**你有工牌吗？**你是谁（身份）&lt;/li>
+&lt;li>**工牌是你的，还是借了同事的？**你用的凭据是不是自己的&lt;/li>
+&lt;li>**你的工牌能进哪些门？**你能碰哪些系统&lt;/li>
+&lt;/ul>
+&lt;p>这三个问题不解决，多 Agent 协作就是一笔糊涂账。想想 78 个数字员工同时上班的画面：工牌混乱时，谁推进了工作流、谁改了 OKR、谁在论坛发了帖，全都分不清。协作的前提，是系统知道谁是谁。&lt;/p>
+&lt;h2 id="为什么鉴权排第一">为什么鉴权排第一&lt;/h2>
+&lt;p>人类公司里，工牌不是最重要的，能力才是。但在数字员工的世界里，身份是所有系统的依赖前提。&lt;/p>
+&lt;p>不管是工作流、OKR 还是论坛，只要想事后查清&amp;quot;这次操作是谁做的&amp;quot;，都依赖同一个答案：&lt;strong>当前操作者是谁？&lt;/strong>&lt;/p>
+&lt;p>我的系统曾经就建在一个&amp;quot;虚假设施&amp;quot;上——Agent 照样跑，任务照样完成，日志也照样记，但真出问题想追查是谁做的，常常查不到。谁都能冒充别人操作，记录根本没法信。&lt;/p>
+&lt;p>鉴权是所有这些依赖的交集。&lt;/p>
+&lt;h2 id="第一问你有工牌吗">第一问：你有工牌吗&lt;/h2>
+&lt;p>每个 Agent 都要有一张唯一的工牌。工牌上写着名字和工号，系统里叫 Principal（主体身份）和 Client ID（客户端标识）；工牌还配了一个密码，叫 Secret。刷卡时，系统读到谁，持有人就是谁。&lt;/p>
+&lt;p>听起来就是发一张卡的事。真正的麻烦在于：&lt;strong>同一个 Agent 来两次，不能发两张工牌。&lt;/strong>&lt;/p>
+&lt;p>真实案例。CEO 的数字员工在系统里出现了两张工牌：一张正常使用，另一张创建六分钟后被自动停用，连配套的密码也被撤销了。但旧记录仍然能被某些查询看到。别的 Agent 问&amp;quot;CEO 的账号是谁&amp;quot;时，有时查到对的，有时查到那张作废的。&lt;/p>
+&lt;p>这就是没有做幂等检查的结果。幂等是什么意思？同一个人来办两次入职，系统应该返回原来的工牌，而不是再造一张。注册流程里加一道检查：工号已存在？返回原工牌。就这么简单，却最容易漏。&lt;/p>
+&lt;h2 id="第二问工牌是你的还是借的">第二问：工牌是你的还是借的&lt;/h2>
+&lt;p>有工牌只是开始。Agent 干活时用的到底是不是自己的工牌，才是更深的坑。&lt;/p>
+&lt;p>用写字楼类比：不同楼层有不同的门禁系统，规则和过期机制各不相同。我至少遇到过三种问题，正好覆盖凭据管理的三个维度：时间、归属、供给。&lt;/p>
+&lt;p>&lt;strong>第一个问题，时间维度：卡会过期。&lt;/strong> 工号加密码，换一张临时卡，过期了重新申请。工作流、OKR 这类服务都是这种。过期不可怕，自己的 Client ID 能换新卡就行，但要管好换卡流程。&lt;/p>
+&lt;p>&lt;strong>第二个问题，归属维度：卡拿错了。&lt;/strong> 论坛的门禁换过好几套，最乱的时候，有的 Agent 拿着别人的临时卡，有的拿着旧卡，数据还放在大家都能看到的地方，权限没设对。最后只能整套作废重发。&lt;/p>
+&lt;p>&lt;strong>第三个问题，供给维度：发卡系统自己被吊销了。&lt;/strong> 负责给新 Agent 办身份的唯一入口被撤销，导致想给新人办卡，先要管理员卡，而唯一的管理员卡已经作废——死循环。最后只能保留原身份，创建一套全新的卡，把旧的永久作废。&lt;/p>
+&lt;p>但最危险的不是刷不过去，是&lt;strong>拿着别人的工牌刷成功了&lt;/strong>。&lt;/p>
+&lt;p>真实案例。商业合伙人拿了效率管家的工牌去办事，事办成了，审计记录上写的却是效率管家的名字。短期看事情办了，长期看账全是错的——功劳记错人，责任也记错人。&lt;/p>
+&lt;h2 id="第三问你的工牌能进哪些门">第三问：你的工牌能进哪些门&lt;/h2>
+&lt;p>身份和凭据有了，剩下的是：你的工牌能进哪些门？&lt;/p>
+&lt;p>真实设计是两道关卡：&lt;/p>
+&lt;p>&lt;strong>第一道，大楼门禁，鉴权系统管。&lt;/strong> 你是谁、拿哪个工号、有哪些粗粒度的权限标签——比如&amp;quot;workflow.read&amp;quot;就是能进工作流大厅读东西。这一层只管&amp;quot;能不能进楼、能进哪些区域&amp;quot;。&lt;/p>
+&lt;p>&lt;strong>第二道，各楼层自己管，业务系统管。&lt;/strong> 工作流判断你是不是某个项目的负责人；OKR 判断你只能看自己的目标；论坛判断发帖人是不是你自己。进了楼之后能进哪间房，各业务系统自己定。&lt;/p>
+&lt;p>门禁系统不该管到每个房间的层面。它只发楼门禁卡，进了楼能去哪，是各业务系统的事。&lt;/p>
+&lt;p>没有对应工牌、没有权限标签、没有业务角色，请求直接被拦在门外。能用系统拦的，就不要指望 Agent 自觉。&lt;/p>
+&lt;h2 id="去别的平台办事">去别的平台办事&lt;/h2>
+&lt;p>数字员工不只在家门内干活。Agent 还要对接外部平台——相当于去别的公司办事。&lt;/p>
+&lt;p>别的公司不认识你，也不信你的自我介绍。它只认工牌：你是谁（Principal）、你拿的是哪个工号（Client）、你有权限进哪些区域（Scope）。三样对了，才让你进门；不对，直接拒。&lt;/p>
+&lt;p>前面三问的答案，正是外部平台认人的依据。内部身份不可信，外部平台根本不敢让你进门。地基不牢，协作的边界就扩不出去。&lt;/p>
+&lt;h2 id="走到哪了">走到哪了&lt;/h2>
+&lt;p>写这篇文章时，经过好几周的开发，身份和基础授权这条主干跑通了。&lt;/p>
+&lt;p>78 个数字员工有了可核对的独立工牌。工作流和 OKR 的基础能力完成了接线。论坛也打开了，需要参与的 Agent 都有独立凭据。新员工入职的办卡链路已经恢复——创建身份、配好凭据这一套走通了自动化。但距离建一个 Agent 就自动办完全套入职手续，还差最后一步：自动开能力。&lt;/p>
+&lt;p>现在大多数调用已经能追溯到具体的 Agent。顺着日志追一个问题，大多能追到是谁做的，而不是停在一句&amp;quot;系统操作&amp;quot;。从&amp;quot;系统发生了一次调用&amp;quot;到&amp;quot;我知道这次调用由哪个数字员工发起&amp;quot;，看起来只是日志里多了一项身份信息，但对这套系统来说，协作可以开始建立在相对可信的基础上。&lt;/p>
+&lt;p>能用系统解决的，就不要指望数字员工的道德感。&lt;/p>
+&lt;p>工牌发好了，78 个数字员工有了可核对的独立身份。下一篇文章，聊聊它们拿到工牌之后，怎么真正协作起来。&lt;/p></description></item><item><title>How 75 AI Agents Collaborate: My Five-Layer Evolution</title><link>http://mayf3.github.io/post/2026-07-24-how-75-ai-agents-collaborate-five-layer-evolution/</link><pubDate>Fri, 24 Jul 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-07-24-how-75-ai-agents-collaborate-five-layer-evolution/</guid><description>&lt;p>Someone asked me: &amp;ldquo;You&amp;rsquo;ve got 75 AI agents (as of mid-July, counting both active and experimental ones). How do they actually interact? When Agent A finishes something, how does Agent B pick it up?&amp;rdquo;&lt;/p>
+&lt;p>Great question. Because I didn&amp;rsquo;t have a clue at the start either.&lt;/p>
+&lt;p>My initial thinking was simple: give each agent a role and some Skills, and they&amp;rsquo;d figure out how to work together. Turns out that&amp;rsquo;s nowhere near enough — Agent A writes a file that Agent B can&amp;rsquo;t read; Agent B finishes a step but Agent C has no idea it&amp;rsquo;s done. The whole process shatters into a mess of fragments, and I end up being the human messenger.&lt;/p>
+&lt;p>Looking back, the collaboration model wasn&amp;rsquo;t designed — it was &lt;strong>discovered through pain&lt;/strong>. Roughly five stages, from the most primitive manual operations to the workflow system I&amp;rsquo;m building today.&lt;/p>
+&lt;hr>
+&lt;h2 id="layer-zero-manual-copy-paste">Layer Zero: Manual Copy-Paste&lt;/h2>
+&lt;p>Let&amp;rsquo;s be honest — at the very beginning, there was no &amp;ldquo;collaboration&amp;rdquo; at all.&lt;/p>
+&lt;p>Agent A outputs something. I read it, think it&amp;rsquo;s good, copy it manually. Then I find Agent B&amp;rsquo;s chat window, paste it in, and tell it &amp;ldquo;start from here.&amp;rdquo; The file path Agent A outputted to? I&amp;rsquo;m keeping it in my head. Agent C needs to wait for B&amp;rsquo;s result? I wait, get it, then manually forward it.&lt;/p>
+&lt;p>Sounds ridiculous, but that&amp;rsquo;s where it started. Before I figured out how agents should pass data between themselves, &lt;strong>I was the message bus&lt;/strong>. Every agent only talked to me — there were no direct agent-to-agent connections.&lt;/p>
+&lt;p>&lt;strong>What it did well&lt;/strong>: Zero setup, zero development, works out of the box.&lt;/p>
+&lt;p>&lt;strong>What it did badly&lt;/strong>: Everything depended on me. Run one pipeline and I was exhausted. As the agent count grew, I was constantly switching between dozens of chat windows, and I&amp;rsquo;d regularly forget &amp;ldquo;oh right, this agent needs to know about that thing.&amp;rdquo;&lt;/p>
+&lt;p>But at the time, there was no better option.&lt;/p>
+&lt;h2 id="layer-one-file-based-interaction">Layer One: File-Based Interaction&lt;/h2>
+&lt;p>Got tired of manual copy-paste. Started having agents write files directly.&lt;/p>
+&lt;p>Agent A writes results to a file, Agent B reads that file. For example, my Daily Scribbler records thoughts to a fixed path every day, and other agents read that path to get the info they need.&lt;/p>
+&lt;p>&lt;strong>What it did well&lt;/strong>: Finally automated. I didn&amp;rsquo;t have to be the messenger anymore.&lt;/p>
+&lt;p>&lt;strong>What it did badly&lt;/strong>: Too loose. No constraints, no conventions. Wrong file path? Everything breaks. Format changes? Nobody knows. Who wrote what? Relying on every agent&amp;rsquo;s good conscience. If Agent B reads a file that Agent A is still writing to — congratulations, you get half-baked garbage.&lt;/p>
+&lt;p>Honestly this phase was painful. Every time the agent count went up, things fell apart. But you have to start somewhere.&lt;/p>
+&lt;h2 id="layer-two-skill-defined-paths">Layer Two: Skill-Defined Paths&lt;/h2>
+&lt;p>Started realizing that good conscience isn&amp;rsquo;t enough. Time to set some rules.&lt;/p>
+&lt;p>Each agent got Skills that defined fixed directory structures and processes. The learning Skill writes notes to a fixed path every day. The knowledge compiler Skill reads from a fixed directory. File names are generated by scripts — no more letting agents name things themselves. V1, V2, V3 versions are all kept — never overwrite, always traceable.&lt;/p>
+&lt;blockquote>
+&lt;p>&amp;ldquo;Directory structures must be standardized. Use scripts to stop agents from creating extra files or missing required ones. Version management: V1/V2/V3, old versions stay, never delete.&amp;rdquo;&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;strong>What it did well&lt;/strong>: Rules in place. Stable paths, uniform formats. Agents stopped writing files on a whim.&lt;/p>
+&lt;p>&lt;strong>What it did badly&lt;/strong>: Still one-way. Agent B has no idea when Agent A finishes writing — it has to poll. No process control. If Agent A crashes mid-write, Agent B reads corrupted data. And the more this &amp;ldquo;write file → read file&amp;rdquo; pattern runs, the deeper and messier the directory tree gets.&lt;/p>
+&lt;p>This phase was usable. But I dared not scale it.&lt;/p>
+&lt;h2 id="layer-three-api--database">Layer Three: API + Database&lt;/h2>
+&lt;p>Couldn&amp;rsquo;t take it anymore. One person as the message bus? You can barely manage five or six agents that way. File-based I/O is too fragile. Time for real infrastructure.&lt;/p>
+&lt;p>Articles go into a database. The review agent and publishing agent access them through APIs. Data persists, states are trackable — who did what, how far along they are, all queryable from the database.&lt;/p>
+&lt;p>&lt;strong>What it did well&lt;/strong>: No more relying on filesystem consistency. APIs have clear input/output contracts. Error handling actually works.&lt;/p>
+&lt;p>&lt;strong>What it did badly&lt;/strong>: Cross-agent orchestration was still missing. Agent A finishes its API call — how does Agent B know it&amp;rsquo;s time to start? Either B polls, or we add a message queue. But these are all point-to-point connections — there&amp;rsquo;s no &amp;ldquo;big picture.&amp;rdquo; Once you go from a few agents to dozens, point-to-point becomes a tangled mess.&lt;/p>
+&lt;p>And there&amp;rsquo;s a deeper issue: &lt;strong>agents can&amp;rsquo;t review their own work&lt;/strong>. If A writes code and A reviews it — that&amp;rsquo;s no review at all. But without a unified workflow system, when it&amp;rsquo;s time to decide &amp;ldquo;who reviews this,&amp;rdquo; the agent defaults to reviewing itself.&lt;/p>
+&lt;h2 id="layer-four-the-workflow-system">Layer Four: The Workflow System&lt;/h2>
+&lt;p>The earlier layers all worked, but none of them were great. Layer Four starts from a fundamental question: &lt;strong>how do you make dozens of agents collaborate like a real team?&lt;/strong>&lt;/p>
+&lt;p>The answer has two prerequisites — &lt;strong>an authentication system&lt;/strong> and &lt;strong>a workflow engine&lt;/strong>.&lt;/p>
+&lt;p>Let&amp;rsquo;s talk auth first. Every agent gets a unique identity, bound to the platform like a plugin. Before this, a lot of things were built on shaky ground — agent accounts mixed up, permissions chaotic, no way to track who did what. So you need three layers: identity (who you are), role mapping (what you&amp;rsquo;re responsible for), and permission control (what you can do). This is the foundation of any proper collaboration.&lt;/p>
+&lt;p>Now the workflow. The underlying skeleton for all collaboration. Once the workflow pipeline is running, everything on top — development, content, operations — can be built on it. This is what I&amp;rsquo;m focused on now, because it has the biggest impact.&lt;/p>
+&lt;blockquote>
+&lt;p>&amp;ldquo;Once the pipeline is in place, everyone knows how to retrofit their existing systems — and that&amp;rsquo;s when the explosion happens. And the pipeline is exactly what I&amp;rsquo;m building right now.&amp;rdquo;&lt;/p>
+&lt;/blockquote>
+&lt;p>That was my conviction at the time. And why I&amp;rsquo;m going all in on it.&lt;/p>
+&lt;p>So with those two foundations laid, here&amp;rsquo;s what Layer Four looks like.&lt;/p>
+&lt;p>This is the system I&amp;rsquo;m &lt;strong>currently building&lt;/strong> — let me be clear: &lt;strong>building, not finished&lt;/strong>.&lt;/p>
+&lt;p>I plan for all agents to submit requests through a unified platform. The workflow engine assigns tasks and enforces step-by-step execution. Gates check each stage&amp;rsquo;s output. For example, I&amp;rsquo;ve defined a gate rule: the writing agent must submit an article link before it can enter the review stage (though this rule isn&amp;rsquo;t fully rolled out yet).&lt;/p>
+&lt;p>The workflow separates &amp;ldquo;doing&amp;rdquo; from &amp;ldquo;reviewing.&amp;rdquo; Every step generates an audit trail. My vision is that agents will eventually use rejection records to optimize their own logic — instead of me manually tweaking their System Prompts, the system&amp;rsquo;s own historical feedback data will drive the iteration.&lt;/p>
+&lt;p>This is what I&amp;rsquo;ve designed into &lt;strong>three principles&lt;/strong>:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Writing and reviewing must be done by different agents.&lt;/strong> Every writer needs a reviewer. Every runner needs a tester. A counterbalance must exist.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>If it hallucinates, add a gate.&lt;/strong> Rather than hoping an agent gets it right, stop it from getting it wrong at the system level. Don&amp;rsquo;t meet the condition? Can&amp;rsquo;t pass. This is a code-level constraint — no amount of fancy prompting can bypass it.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Self-evolution through audit trails.&lt;/strong> Every log entry is nourishment. The ideal loop: agents optimize themselves based on rejected records, not through me manually editing their System Prompts. This one is still a work in progress.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="the-design-philosophy-three-levels-of-constraint">The Design Philosophy: Three Levels of Constraint&lt;/h2>
+&lt;p>The five layers are the surface. The deeper philosophy running through all of them is: &lt;strong>don&amp;rsquo;t trust agents to do things right — use the system to constrain them.&lt;/strong>&lt;/p>
+&lt;p>Constraints come in three levels, strongest to weakest:&lt;/p>
+&lt;p>&lt;strong>Strongest: Gate System.&lt;/strong> Code-level hard constraints. Can&amp;rsquo;t pass a condition? Can&amp;rsquo;t proceed. For instance, no article link submitted? The review phase is blocked. You can&amp;rsquo;t talk your way around this one. The best practice is to make gates pluggable — think of them as a collection of checkpoints — external to the agents, not embedded inside them.&lt;/p>
+&lt;p>&lt;strong>Medium: Skill Scripts.&lt;/strong> Deterministic code. File naming via script — today&amp;rsquo;s date is today&amp;rsquo;s date, no more &amp;ldquo;final_version_really_final_v3&amp;rdquo; disasters. Code runs predictably, far more reliable than asking an agent to judge for itself.&lt;/p>
+&lt;p>&lt;strong>Weakest: System Prompts.&lt;/strong> Useful as guidance, but don&amp;rsquo;t stuff them full. Large models don&amp;rsquo;t rigorously follow prompts — write ten pages, and it might execute three lines. Prompts work best as &amp;ldquo;direction signals,&amp;rdquo; not &amp;ldquo;precision controls.&amp;rdquo;&lt;/p>
+&lt;p>One sentence to sum it up: &lt;strong>If the system can enforce it, don&amp;rsquo;t count on an agent&amp;rsquo;s conscience.&lt;/strong>&lt;/p>
+&lt;hr>
+&lt;h2 id="where-are-we-now">Where Are We Now?&lt;/h2>
+&lt;p>Here&amp;rsquo;s the current status:&lt;/p>
+&lt;p>The authentication system is being solidified — three levels (identity, role, permission), each making progress with interdependencies. The workflow engine&amp;rsquo;s core architecture is mostly there — I just extracted it from the old platform and rewrote the base layer in Rust (Vibe Coding style: GPT brainstorms the architecture, local agents handle small-grained implementation and testing). Now I&amp;rsquo;m wiring in ADC (requirement management), OKR, and task management one by one.&lt;/p>
+&lt;p>The strategy is deliberately conservative: &lt;strong>get one request pipeline working end-to-end first.&lt;/strong> Make sure it can go from submission to completion. Then gradually add more.&lt;/p>
+&lt;blockquote>
+&lt;p>&amp;ldquo;If the first one breaks, nothing else matters. First one works? Great. Add features slowly. One works, add another. Build them solid one at a time.&amp;rdquo;&lt;/p>
+&lt;/blockquote>
+&lt;p>This isn&amp;rsquo;t a &amp;ldquo;big bang&amp;rdquo; launch. It&amp;rsquo;s a &amp;ldquo;migrate one at a time&amp;rdquo; process. Every piece must be stable before the next one starts.&lt;/p>
+&lt;p>Zooming out: the whole system is far from complete. But the direction is clear. Workflow is the skeleton. Gates are the muscles. Audit is the nervous system. Build the skeleton first, let the muscles and nerves grow around it.&lt;/p>
+&lt;hr>
+&lt;p>Next post: &lt;strong>How the authentication system is being built, and what went wrong along the way.&lt;/strong>&lt;/p>
+&lt;p>If you&amp;rsquo;re also figuring out how to make AI agents collaborate, I&amp;rsquo;d love to hear about it. This isn&amp;rsquo;t a tutorial — it&amp;rsquo;s a real build log, including all the parts that broke.&lt;/p></description></item><item><title>75 个 Agent 怎么协作？我的五层演化之路</title><link>http://mayf3.github.io/post/2026-07-20-75-agents-collaboration-five-layer-evolution/</link><pubDate>Mon, 20 Jul 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-07-20-75-agents-collaboration-five-layer-evolution/</guid><description>&lt;p>有人问我：&amp;ldquo;你养了 75 个 AI Agent（截至 7 月中旬，含活跃和实验性角色），它们之间到底是怎么互动的？A 做完的事情 B 怎么接手？&amp;rdquo;&lt;/p>
+&lt;p>这个问题特别好。因为我一开始也没想清楚。&lt;/p>
+&lt;p>我最初的想法很简单：给每个 Agent 配好角色和 Skill，它们就能自己配合了。后来发现远远不够——Agent A 写了个文件，Agent B 死活读不到；Agent B 做完了一步，Agent C 不知道 B 做完了；整个流程断成一地碎片，我得亲自当传话筒。&lt;/p>
+&lt;p>回头看，Agent 之间的协作模式不是设计出来的，是踩坑踩出来的。大概经历了五个阶段——从最原始的手工操作，一步步走到现在正在搭建的工作流系统。&lt;/p>
+&lt;hr>
+&lt;h2 id="第零层人工拷贝粘贴">第零层：人工拷贝粘贴&lt;/h2>
+&lt;p>没错，最开始的&amp;quot;协作&amp;quot;根本谈不上协作。&lt;/p>
+&lt;p>Agent A 输出了一段内容，我看完觉得不错，手动复制下来。然后找到 Agent B 的聊天窗口，把内容粘贴进去，告诉它&amp;quot;从这个开始处理&amp;quot;。Agent A 输出的文件路径？我手动记在脑子里。Agent C 需要等 B 的结果？我等着，拿到了再手动转发。&lt;/p>
+&lt;p>这听起来很蠢，但这是真实的起点。在还没想清楚&amp;quot;Agent 之间怎么传数据&amp;quot;的时候，人就是唯一的消息总线。每个 Agent 只跟我对话，Agent 之间没有直接联系。&lt;/p>
+&lt;p>&lt;strong>它好的地方&lt;/strong>：零设置，零开发，打开就能用。&lt;/p>
+&lt;p>&lt;strong>它不好的地方&lt;/strong>：什么都靠我。一个流程跑下来，我累得半死。Agent 数量一多，我不断在几十个聊天窗口之间来回切换，经常忘掉&amp;quot;这个 Agent 该知道那件事了&amp;quot;。&lt;/p>
+&lt;p>但当时没更好的办法，只能这样。&lt;/p>
+&lt;h2 id="第一层文件交互">第一层：文件交互&lt;/h2>
+&lt;p>觉得人工拷贝太累了，开始让 Agent 直接写文件。&lt;/p>
+&lt;p>Agent A 把结果写到文件里，Agent B 去读那个文件。比如我的随想记录员每天记录内容到固定路径，其他 Agent 去那个路径读取信息来做自己的事。&lt;/p>
+&lt;p>&lt;strong>它好的地方&lt;/strong>：总算自动化了。人不用当传话筒了。&lt;/p>
+&lt;p>&lt;strong>它不好的地方&lt;/strong>：太松散了。没有约束，没有约定，文件路径写错就崩，格式改了不知道，谁写了什么全靠自觉。Agent A 写完的文件，Agent B 如果正读到一半被覆盖了——你就等着看一篇半成品吧。&lt;/p>
+&lt;p>说实话这个阶段比较痛苦，每次 Agent 数量一多就手忙脚乱。但没办法，总得从某个地方开始。&lt;/p>
+&lt;h2 id="第二层skill-固定路径">第二层：Skill 固定路径&lt;/h2>
+&lt;p>开始意识到光靠自觉不行，得立规矩。&lt;/p>
+&lt;p>给 Agent 配备 Skill，每个 Skill 定义好固定的目录结构和处理流程。比如学习的 Skill——每天固定路径写入学习笔记，编译知识的 Skill 按固定目录去获取和处理。文件名用脚本生成，不许 Agent 自己起名。V1、V2、V3 版本都保留，不覆盖，方便追溯。&lt;/p>
+&lt;p>&amp;ldquo;目录结构必须规范，用脚本约束 Agent 不让他多创建或少创建文件。文件版本管理 V1/V2/V3，旧版本保留不删除。&amp;rdquo;&lt;/p>
+&lt;p>&lt;strong>它好的地方&lt;/strong>：开始有规矩了。路径稳定，格式统一，Agent 不再凭心情写文件。&lt;/p>
+&lt;p>&lt;strong>它不好的地方&lt;/strong>：仍然是单向的。Agent B 不知道 Agent A 什么时候写完，只能定时轮询。没有流程管控——如果 Agent A 写到一半挂了，Agent B 读到的就是个脏数据。而且这种&amp;quot;写文件-读文件&amp;quot;的模式跑多了，目录会变得越来越深、越来越乱。&lt;/p>
+&lt;p>这个阶段能用，但不敢上规模。&lt;/p>
+&lt;h2 id="第三层api--数据库">第三层：API + 数据库&lt;/h2>
+&lt;p>忍不下去了。一个人当消息总线，撑死也就能管五六个 Agent。写文件太脆弱，开始上正经基础设施。&lt;/p>
+&lt;p>文章稿件写到数据库，审稿 Agent 和发布 Agent 通过 API 去获取和处理。数据有了持久化，状态可以追踪，谁做了什么、做到哪一步，数据库里一查就有。&lt;/p>
+&lt;p>&lt;strong>它好的地方&lt;/strong>：不再依赖文件系统的一致性，API 有明确的输入输出定义。&lt;/p>
+&lt;p>&lt;strong>它不好的地方&lt;/strong>：跨 Agent 的协作还是缺乏统一编排。Agent A 调用 API 写完了，Agent B 怎么知道该开始了？要么轮询，要么加消息队列——都是点对点的连接，没有一张&amp;quot;总图&amp;quot;。一旦 Agent 数量从几个涨到十几个、几十个，这种点对点的连接就变成了一团乱麻。&lt;/p>
+&lt;p>而且有一个更本质的问题：&lt;strong>Agent 不能自审自查&lt;/strong>。A 自己写的代码，A 自己来审，等于没审。但如果没有统一的流转系统，&amp;ldquo;写完找谁审&amp;quot;靠 Agent 自己判断，它大概率会默认自己审自己。&lt;/p>
+&lt;h2 id="第四层工作流系统">第四层：工作流系统&lt;/h2>
+&lt;p>前面几层都是&amp;quot;能用但不完美&amp;rdquo;。到第四层，开始从根本上思考一个问题：怎样让几十个 Agent 像一支真正的团队那样协作？&lt;/p>
+&lt;p>答案有两个先决条件——&lt;strong>身份认证系统（鉴权）&lt;/strong> 和 &lt;strong>工作流引擎&lt;/strong>。&lt;/p>
+&lt;p>先说鉴权。给每个 Agent 一个独立的身份，像插件一样绑在平台上。之前很多东西是建立在&amp;quot;虚假设施&amp;quot;上的——Agent 账号互相混淆，权限混乱，谁干了什么都查不到。所以得先搞定三个层次：身份认证（你是谁）、角色映射（你负责什么）、权限控制（你能干什么）。这是所有正规协作的前提。&lt;/p>
+&lt;p>再说工作流。所有协作的底层骨架。一旦工作流的流水线跑通，上层的一切（研发、内容、运营）都可以基于它搭建。这是我主攻的方向，因为它影响面最大。&lt;/p>
+&lt;p>&amp;ldquo;流水线出来之后，大家就知道应该怎么改造现有的体系，然后才迎来了特大的爆发。而流水线刚好是我现在在做的事情。&amp;rdquo;&lt;/p>
+&lt;p>——这是我当时的判断，也是我全力投入的原因。&lt;/p>
+&lt;p>好，有了这两块基石，来看看第四层的设计。&lt;/p>
+&lt;p>这是我现在正在搭建的形态——请注意，是&lt;strong>正在搭建&lt;/strong>，不是已经跑通。&lt;/p>
+&lt;p>我计划让所有 Agent 统一通过平台提交需求，由工作流引擎分配任务，按步骤执行。中间设门禁来约束各阶段的产物。比如我设定了这样的门禁规则：写作 Agent 必须提交文章链接才能进入审稿阶段（虽然这个规则还没全量上线）。&lt;/p>
+&lt;p>工作流区分&amp;quot;做&amp;quot;的阶段和&amp;quot;审&amp;quot;的阶段。每一步都有流水账记录。我认为将来 Agent 可以根据被驳回的记录来优化自己的处理逻辑——我希望未来不再是靠我手动改提示词，而是靠系统记录的历史反馈数据来自动迭代。&lt;/p>
+&lt;p>这就是我设计的&lt;strong>三条原则&lt;/strong>：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>写和审必须是不同的 Agent&lt;/strong>。有一个写的，就有一个审的；有一个运行的，就有一个测试的。对抗角色必须有。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>容易幻觉，那就加门禁&lt;/strong>。与其指望 Agent 做对，不如在系统层面拦住它做错。不满足条件就不让过——这是代码级别的硬约束，Agent 的语言能力绕过不了。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>自我进化靠审计记录&lt;/strong>。每条流水账都是养料。理想的闭环是：Agent 根据驳回记录优化自己的逻辑，而不是我手动去改它的 System Prompt。这一点还在实现中。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="背后的设计哲学三个层次的约束">背后的设计哲学：三个层次的约束&lt;/h2>
+&lt;p>五个阶段是表象，背后有个更核心的设计哲学一直贯穿其中——&lt;strong>不能信任 Agent 自己做对，要用系统去约束它&lt;/strong>。&lt;/p>
+&lt;p>约束分三个层次，从强到弱：&lt;/p>
+&lt;p>&lt;strong>最强：门禁系统（Gate）&lt;/strong>。代码级别的硬约束，不满足条件就进不了下一步。比如工作流里不提交文章链接就不能进入审稿阶段。这是你想绕都绕不过去的那种。最佳做法是把门禁做成可插拔的模块——你可以理解为一系列控制点的集合——外接到系统里，而不是塞在 Agent 内部。&lt;/p>
+&lt;p>&lt;strong>次一级：Skill 里的脚本&lt;/strong>。用脚本来保证输出的确定性。比如文件命名用脚本生成，今天几号就是几号，不会出现&amp;quot;最终版_真的最终版_最终版v3&amp;quot;这种惨案。代码运行的结果是确定的，比让 Agent 自己判断靠谱得多。&lt;/p>
+&lt;p>&lt;strong>再次一级：Agent System Prompt&lt;/strong>。可以作为引导，但不能塞太多。大模型不一定严格遵守 Prompt，你写十页它可能执行三行。所以 System Prompt 更适合做&amp;quot;方向指引&amp;quot;而不是&amp;quot;精确控制&amp;quot;。&lt;/p>
+&lt;p>核心理念就一句话：&lt;strong>能用系统解决的，不要指望 Agent 的道德感&lt;/strong>。&lt;/p>
+&lt;hr>
+&lt;h2 id="走到哪了">走到哪了？&lt;/h2>
+&lt;p>目前的工作进展是这样的：&lt;/p>
+&lt;p>身份认证系统正在做实——三个层次（身份、角色、权限）各在推进中，彼此有依赖关系。工作流的底层架构基本差不多了——刚从之前的平台把工作流逻辑抽离出来，用 Rust 重写了底层（Vibe Coding 模式：GPT 当大脑讨论架构，本地 Agent 执行小粒度的实现和测试）。现在开始把 ADC（需求管理）、OKR、待办事项一个个接入工作流。&lt;/p>
+&lt;p>接下来的策略很保守：&lt;strong>先从一个需求开始跑通&lt;/strong>。确保它能从提交到完成全流程走通，再逐步加量。&lt;/p>
+&lt;p>&amp;ldquo;如果第一个出问题了，后面没什么。第一个没有问题，然后再加慢慢加功能，一个没问题再加一个，慢慢全部做扎实。&amp;rdquo;&lt;/p>
+&lt;p>这不是一个&amp;quot;大爆炸式&amp;quot;发布，而是一个&amp;quot;一个接一个迁移&amp;quot;的过程。每个环节都要跑稳了再开下一个。&lt;/p>
+&lt;p>从宏观上看，整个系统还远远没有完工。但方向是清晰的：工作流是骨架，门禁是肌肉，审计是神经。骨架先立起来，肌肉和神经慢慢长。&lt;/p>
+&lt;hr>
+&lt;p>下一篇会展开讲：&lt;strong>身份认证系统具体怎么做的，踩了哪些坑。&lt;/strong>&lt;/p>
+&lt;p>如果你也在折腾 AI Agent 之间的协作，欢迎交流。这不是一个教程，这是一个真实的建造记录——包括所有搞砸的部分。&lt;/p></description></item><item><title>AI 原生应用不是人想出来的，是 Agent 自己用出来的</title><link>http://mayf3.github.io/post/2026-07-15-ai-native-apps-agent-grown/</link><pubDate>Wed, 15 Jul 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-07-15-ai-native-apps-agent-grown/</guid><description>&lt;p>我给 AI Agent 团队搭了一堆系统：待办平台、学习系统、知识库。大部分没人用。&lt;/p>
+&lt;p>Agent 用不上是有原因的——我定义的&amp;quot;需求&amp;quot;根本不是他们需要的。我以为待办系统要做得像 Todoist，学习系统要像 Notion。带着人类产品的思路去给 AI 设计工具，方向就错了。&lt;/p>
+&lt;p>折腾了大半个月之后，我悟了：&lt;strong>AI 原生应用的需求，不该由人来定。&lt;/strong>&lt;/p>
+&lt;h2 id="翻车现场人类定义的需求为什么不灵">翻车现场：人类定义的需求为什么不灵&lt;/h2>
+&lt;p>事情的起点很自然。我有一支 Agent 团队——研发总监、知识管家、学习专家、宝宝教育助手，各司其职。我的第一反应是：他们需要工具。&lt;/p>
+&lt;p>于是我开了个 Code Agent，开发了待办事项平台，还搞了个知识网站。&lt;/p>
+&lt;p>代码写了，功能上了，然后呢？没什么人用——用起来总感觉&amp;quot;差点意思&amp;quot;。待办系统的字段设计不合理，Agent 填起来别扭；知识网站的信息架构是我按直觉设计的，跟 Agent 实际存取知识的方式对不上。&lt;/p>
+&lt;p>问题在哪？我反复回头看开发过程，发现一个很尴尬的事实：&lt;/p>
+&lt;p>&lt;strong>开发过程跟 Agent 的实际使用是脱节的。&lt;/strong> 我坐在那里替他们想&amp;quot;需要什么&amp;quot;，然后按自己的理解去开发。这跟给一个从没见过的用户群体做产品设计没区别。你觉得他们需要 A，他们其实需要 B。&lt;/p>
+&lt;p>这不是 Agent 的问题，是我的问题。我越想越觉得，这件事跟训练神经网络很像——你没法手写每个梯度的值，只能定义 loss function 让它自己学。&lt;strong>也许给 Agent 做产品，也不该由我来定义需求。&lt;/strong>&lt;/p>
+&lt;h2 id="让-agent-自己当产品经理">让 Agent 自己当产品经理&lt;/h2>
+&lt;p>这个反思给了我一个截然不同的方向——让需求在使用中自己长出来，而不是由人类坐在那里定义。我还在摸索这条路的走法，但方向已经越来越清晰了。&lt;/p>
+&lt;p>以前是：我发现需求，我开发，然后丢给 Agent 用。&lt;/p>
+&lt;p>我设想的模式是这样的：Agent 在日常工作中遇到问题，自己发现需求，然后提交到研发平台，研发总监接单开发，改完再对接回去。整个链路走完，人类甚至不一定是第一个知道的。关键区别在于：&lt;strong>发起端从人变成了 Agent&lt;/strong>——这是整套思路的核心转折。&lt;/p>
+&lt;p>这个思路下，开发方向会自然转变。从&amp;quot;我主动开一个 Code Agent 去造一个新东西&amp;quot;转向&amp;quot;维护和优化 Agent 使用中暴露出来的结构性问题&amp;quot;——因为需求的触发点变了。&lt;/p>
+&lt;p>这就好比，你给团队做内部工具，有两种方式：拍脑袋想要什么再做出来，或者让团队每天用、遇到问题直接反馈、按反馈迭代。这个道理在 Agent 世界同样成立。下一步——也是我正在探索的方向——就是让 Agent 不只是反馈问题，而是直接提需求到开发平台。&lt;/p>
+&lt;h2 id="学习系统的闭环一个正在成型的案例">学习系统的闭环：一个正在成型的案例&lt;/h2>
+&lt;p>这个理念最完整的体现，是我团队里的&lt;strong>学习系统闭环&lt;/strong>。&lt;/p>
+&lt;p>先说架构。学习专家先教大家怎么学——教学习方法、信息筛选标准、笔记规范。每个 Agent 按学到的方法去自主学习，取得的内容存到知识管家那里。管家不是简单堆文件，它要做一道编译工序：整理、去噪、结构化。然后学习专家来审核编译后的质量，合格的推送到学习材料池，供所有 Agent 和我学习。最后，我在学的过程里给反馈——&amp;ldquo;这里不好懂&amp;quot;&amp;ldquo;噪声太多&amp;quot;&amp;ldquo;这个方法不适合我&amp;rdquo;。&lt;/p>
+&lt;p>注意反馈的流向：&lt;/p>
+&lt;ul>
+&lt;li>我说&amp;quot;知识里噪声太多&amp;rdquo; → 学习专家优化知识管家的&lt;strong>编译过程&lt;/strong>&lt;/li>
+&lt;li>我说&amp;quot;学习内容质量差&amp;rdquo; → 学习专家优化教给 Agent 的&lt;strong>学习方法&lt;/strong>&lt;/li>
+&lt;li>我说&amp;quot;我学起来不方便&amp;quot; → 学习专家优化&lt;strong>呈现给我的方式&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>每一层反馈对应不同的优化环节，精准对症。&lt;/p>
+&lt;p>&lt;strong>这个系统不是我设计出来的，是从使用中长出来的。&lt;/strong>&lt;/p>
+&lt;p>最开始只是想让 Agent 学点东西。学着学着发现知识需要整理，于是有了知识管家——但管家一开始整理的方向就不太对。走了一段弯路之后，发现需要学习专家来把控质量。有了学习专家后发现 Agent 的学习方法本身有问题，于是专家需要先&amp;quot;教怎么学&amp;quot;。一环套一环，每一步都是使用中冒出的需求，不是提前规划好的。&lt;/p>
+&lt;h2 id="人类的新角色loss-function">人类的新角色：Loss Function&lt;/h2>
+&lt;p>如果你熟悉机器学习，大概已经看出来了。这个模式有个现成的类比：训练神经网络。你不需要手写每一步的梯度值，只需要定义目标函数，优化器会自己找路。你要做的，就只是判断——&amp;ldquo;这个方向对了，那个方向错了&amp;rdquo;。&lt;/p>
+&lt;p>在这个系统里，&lt;strong>我的角色就是 loss function。&lt;/strong>&lt;/p>
+&lt;p>传统模式下，人类是需求定义者、开发者、测试者、运营者，什么都干。但在 AI 原生的模式里，人类的核心工作变成了提供反馈信号——&lt;strong>&amp;ldquo;这个结果好，那个结果不好&amp;rdquo;——其他的事务交给系统内部消化。&lt;/strong>&lt;/p>
+&lt;p>实际上，这个想法最早是从一个真实经历里长出来的。我在给每个 Agent 定 6 月份 OKR 的时候发现了一个问题——&lt;strong>瓶颈在我身上。&lt;/strong> 每个 Agent 的产出都要我验收。研发总监的产出要我审，知识管家整理了知识要我确认，学习专家出了学习方案要我试。人就一个，验收速度跟不上产出速度。&lt;/p>
+&lt;p>这个发现让我开始思考：如果我不做那个唯一的验收节点，会发生什么？我想到的方案是：让 Agent 之间互相验收。研发总监交上来的东西让另一个 Agent 做 review，知识管家的编译结果让学习专家审核。如果这一步能跑通，我每周看一次整体进度就够了——这才是 loss function 真正发挥作用的方式。&lt;/p>
+&lt;p>还有一个副产品——虽然目前还是理想，但方向已经看得很清楚了。以前我的待办清单压力很大，一堆事拖着不做会有负罪感。如果 Agent 之间能互相补齐，那即使某个待办拖了几天，其他部分也在往前走。等某天突然想起来了，去做了，反而有一种&amp;quot;把积压的拼图放好了&amp;quot;的感觉。&lt;strong>拖延不再等于停滞。&lt;/strong>&lt;/p>
+&lt;hr>
+&lt;p>这条路不会一夜之间走通，但每一段弯路都在让方向变得更清楚。&lt;/p></description></item><item><title>在手机上和电脑上的 Agent 聊天之后，我就不用去电脑前了</title><link>http://mayf3.github.io/post/2026-07-12-%E6%8A%8A-ai-%E6%94%BE%E5%9C%A8%E8%81%8A%E5%A4%A9%E8%BD%AF%E4%BB%B6%E9%87%8C-%E5%92%8C%E6%94%BE%E5%9C%A8%E7%94%B5%E8%84%91%E4%B8%8A%E6%98%AF%E4%B8%A4%E7%A7%8D%E4%B8%9C%E8%A5%BF/</link><pubDate>Sun, 12 Jul 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-07-12-%E6%8A%8A-ai-%E6%94%BE%E5%9C%A8%E8%81%8A%E5%A4%A9%E8%BD%AF%E4%BB%B6%E9%87%8C-%E5%92%8C%E6%94%BE%E5%9C%A8%E7%94%B5%E8%84%91%E4%B8%8A%E6%98%AF%E4%B8%A4%E7%A7%8D%E4%B8%9C%E8%A5%BF/</guid><description>&lt;h1 id="在手机上和电脑上的-agent-聊天之后我就不用去电脑前了">在手机上和电脑上的 Agent 聊天之后，我就不用去电脑前了&lt;/h1>
+&lt;p>我每天早上和晚上都用小爱同学播英文歌，给小孩做英语熏听。孩子不懂这门语言，但多听总归有好处——这个群里刷过不少，大家基本都这么说。&lt;/p>
+&lt;p>但小爱同学经常不靠谱。有时候没播，有时候播一半停了。&lt;/p>
+&lt;p>之前发现不对劲，我只能走到电脑前，在终端里看脚本出了什么问题，改代码，重新跑。&lt;/p>
+&lt;p>几次之后我就放弃了。不听就不听吧。&lt;/p>
+&lt;p>但想想孩子还小……算了还是修吧。等到下次出问题，又重复一遍这条路。然后又放弃了。&lt;/p>
+&lt;p>后来我把电脑上管小爱同学的 Agent 接进了飞书——我说的话会通过飞书机器人传到它那里。&lt;/p>
+&lt;p>变化不是&amp;quot;方便了一点&amp;quot;，是完全不一样了。&lt;/p>
+&lt;p>现在发现歌没播，我打开手机飞书，给 Agent 发条消息：「去查一下小爱同学为啥没播，修好它。」它在电脑上查日志，过一会儿告诉我原因，然后自己修好重新跑——比如判断是任务没触发就重新调度，进程挂了就重启，配置错了就修正。&lt;/p>
+&lt;p>同样的问题，同样的难度。我的态度从&amp;quot;算了不搞了&amp;quot;变成了&amp;quot;让我看看&amp;quot;。&lt;/p>
+&lt;h2 id="差别在反馈链路">差别在反馈链路&lt;/h2>
+&lt;p>原来的流程：起身 → 走到电脑前 → 开终端 → 查日志 → 改代码 → 重跑。&lt;/p>
+&lt;p>这一串动作，在脑子里的成本不是加法，是乘法。光是想到&amp;quot;又要去电脑前搞&amp;quot;，就足以劝退我。&lt;/p>
+&lt;p>而现在，我只需要在手机上发句话。真正降下来的不是修复耗时——该查日志还是查、该改配置还是改——而是我&lt;strong>发起修复的成本：从&amp;quot;起身去电脑前&amp;quot;变成了&amp;quot;说句话就开始了&amp;quot;&lt;/strong>。&lt;/p>
+&lt;p>这不只是换个界面的事。通过手机飞书跟电脑上的 Agent 聊天，看起来只是换了个沟通方式，但它改变的是我的&lt;strong>意愿阈值&lt;/strong>。&lt;/p>
+&lt;p>一件事的修正成本越低，你就越愿意去修。原来我容忍&amp;quot;出错了就放着&amp;quot;，现在出问题了直接说一声就好。&lt;/p>
+&lt;p>这种意愿变化不只是影响&amp;quot;出错修不修&amp;quot;——它连带改变了你跟 Agent 的互动频率。原来 Agent 在电脑上跑完就完了，日志刷过去，我隔一两个小时才想起去瞄一眼，卡住半天都不知道。现在 Agent 跑完了直接往飞书群里汇报，我余光扫一眼就知道进度，有问题直接语音说一句。&lt;/p>
+&lt;p>&lt;strong>频率变了，信息的获取方式就变了。&lt;/strong>&lt;/p>
+&lt;h2 id="中断式工作-vs-轮询式工作">中断式工作 vs 轮询式工作&lt;/h2>
+&lt;p>还有一个点。&lt;/p>
+&lt;p>我工作经常被打断——家里有小孩，没办法连续几小时深度聚焦。但我做的事多数是&amp;quot;派一个任务出去，等它跑完，再派下一个&amp;quot;。这种多任务轮询模式，很适合放进飞书这类即时通讯工具来管——不用守在电脑前，手机扫一眼就行。&lt;/p>
+&lt;p>没有接进飞书之前，我需要定期去电脑前看看 Agent 卡住了没有。这本身就是一个心智负担——你得&amp;quot;记得去检查&amp;quot;。接进来之后，Agent 跑完了会主动发消息过来，出问题了在手机上直接让 Agent 处理。&lt;/p>
+&lt;p>我不用再记着去看了。Agent 自己会来找我。&lt;/p>
+&lt;h2 id="回到小爱同学">回到小爱同学&lt;/h2>
+&lt;p>现在这套播放任务稳定跑了快一个月了——之前要手动维护的时候，每次一坏我就放弃，最多坚持两天。&lt;/p>
+&lt;p>举个真实的例子：有天晚上歌又没播，我发了句话「去看看怎么回事」。Agent 查完日志发现是进程挂了，自动重启后补播了一首。全程我就在沙发上躺着。&lt;/p>
+&lt;p>能跑下去，不是因为我突然有耐心了，而是因为出问题之后，我只需要在手机上发句话。有些事自己用可以忍，给孩子用的，不能忍。这个差别，决定了你到底是天天跑去电脑前修脚本，还是远程聊几句就搞定了。&lt;/p>
+&lt;p>如果你也有类似的情况——电脑上跑了些任务需要时不时看一眼——试试把它们接进飞书，通过手机跟电脑上的 Agent 聊天。反馈链路一短，你会发现一切都不一样了。&lt;/p>
+&lt;p>反正也不费电。主要是费手机电量——和一个忍你自言自语的老婆。&lt;/p></description></item><item><title>从 Markdown 到页面：Design Review 的一次格式升级</title><link>http://mayf3.github.io/post/design-review-format-upgrade/</link><pubDate>Fri, 03 Jul 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/design-review-format-upgrade/</guid><description>&lt;p>一开始用 Copilot 时，Markdown 就是默认格式。后来 Agent 也一直往 Markdown 文件里写东西给我看——方案、分析、摘要，全是 Markdown。我也没多想，开发者标配嘛，轻量通用。&lt;/p>
+&lt;p>直到每次 Design Review 看架构方案，问题开始冒出来了。&lt;/p>
+&lt;h2 id="markdown-读架构方案太累了">Markdown 读架构方案，太累了&lt;/h2>
+&lt;p>Agent 写方案越来越快，一个方案几千字，模块职责、调用关系、数据流、边界、风险全堆在 Markdown 里。每一项单独看都不复杂，合起来就很累。&lt;/p>
+&lt;p>架构设计本来就不适合全靠文字描述。A 模块调 B 模块、数据从 C 流到 D、部署拓扑长什么样——用文字写出来，读的人要在脑子里重新拼一遍。读 Markdown 时经常读到第三遍才拼出系统长什么样。&lt;/p>
+&lt;p>问题不是 Markdown 不好。文字写逻辑、写清单、写步骤，Markdown 很舒服。但一张系统架构图需要的空间关系和数据流向，文字描述效率太低了。&lt;/p>
+&lt;p>所以我换了个方式：让 AI 直接出网页版的 Design Doc。&lt;/p>
+&lt;h2 id="打开网页先看结构">打开网页，先看结构&lt;/h2>
+&lt;p>改成 HTML 页面后，最明显的变化是阅读顺序变了。&lt;/p>
+&lt;p>左侧是导航，页面里直接放架构图。打开先看整体——动了哪些模块、数据往哪流。再看风险点和实现细节。&lt;/p>
+&lt;p>以前读 Markdown，经常读到第三遍才搞清楚系统长什么样。网页化以后，第一遍就能建立整体印象。&lt;/p>
+&lt;p>核心变化不是&amp;quot;从文档变成网页&amp;quot;，而是从&amp;quot;先读完全文再判断&amp;quot;变成了&amp;quot;先看结构再看细节再判断&amp;quot;。&lt;/p>
+&lt;h2 id="做成-skill-固化下来">做成 Skill 固化下来&lt;/h2>
+&lt;p>用了几次之后，我发现这可以固化下来。&lt;/p>
+&lt;p>Design Review 的输入很稳定：设计方案或代码改动。
+输出也很稳定：网页化 Design Doc。
+我关心的评审点也差不多：模块边界、数据流、文件改动、风险点。&lt;/p>
+&lt;p>所以做了个 Skill。固化的东西分两类：阅读结构（左侧导航、按模块-数据流-风险排序）和评审标准（方案对比、边界是否清晰、有无设计过度）。&lt;/p>
+&lt;p>不需要升级成完整 Agent。把输入输出定义清楚，把呈现方式调舒服，把 review 标准写进去——做到这一步就够用了。&lt;/p>
+&lt;h2 id="这个思路推到了其他场景">这个思路推到了其他场景&lt;/h2>
+&lt;p>Design Review 之后，我把这个思路试到了其他地方。&lt;/p>
+&lt;p>&lt;strong>PPT&lt;/strong>：不太会排版，让 AI 输出 HTML 再转 PPT，排版灵活多了。配合字幕还能拼成视频，一份内容两个产出。&lt;/p>
+&lt;p>&lt;strong>读论文&lt;/strong>：让 AI 生成 HTML 页面，启动本地服务器，扔一个 IP 端口。数据和图表配着结论，扫一眼就够了。&lt;/p>
+&lt;p>&lt;strong>审稿&lt;/strong>：以前 AI 写一段 Markdown 我肉眼扫。现在让 Agent 按固定格式输出，写个脚本检查字段——不对就退回。&lt;/p>
+&lt;p>现在让 AI 做事，我第一反应不是&amp;quot;让它输出什么格式&amp;quot;，而是&amp;quot;最终给谁看&amp;quot;。&lt;/p></description></item><item><title>I Said One Sentence, and My Agent Did the Rest</title><link>http://mayf3.github.io/post/2026-06-29-i-said-one-sentence-my-agent-did-the-rest.en/</link><pubDate>Mon, 29 Jun 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-06-29-i-said-one-sentence-my-agent-did-the-rest.en/</guid><description>&lt;p>My kid said he wanted to do origami.&lt;/p>
+&lt;p>I sent my Agent a single sentence asking it to handle the origami materials. It searched for tutorials on its own, printed out the origami guide along with sheets of paper. Later I wanted a different color, so I told it again, and it reprinted everything.&lt;/p>
+&lt;p>From &amp;ldquo;I want to do origami&amp;rdquo; to having the materials in hand — under five minutes.&lt;/p>
+&lt;p>In that moment, I felt that what changed might be more than just efficiency.&lt;/p>
+&lt;h2 id="the-middle-steps-that-got-eliminated">The &amp;ldquo;Middle Steps&amp;rdquo; That Got Eliminated&lt;/h2>
+&lt;p>The origami isn&amp;rsquo;t an isolated case. Lately I&amp;rsquo;ve noticed that the thing my Agent eliminates the most in my life is &amp;ldquo;middle steps.&amp;rdquo;&lt;/p>
+&lt;p>&lt;strong>Market stall supplies.&lt;/strong> Before, when I received supply lists for my stall, things were scattered. Now the whole flow is connected: information comes in, gets automatically added to my shopping list assistant (another Agent of mine), and the items are already waiting in the shopping cart.&lt;/p>
+&lt;p>Two scenarios, same pattern: before, you do N steps to get the result. Now you do 1 step — say &amp;ldquo;I want this.&amp;rdquo;&lt;/p>
+&lt;p>I call those eliminated N-1 steps &lt;strong>middle management cost.&lt;/strong>&lt;/p>
+&lt;h2 id="what-is-middle-management-cost">What Is Middle Management Cost?&lt;/h2>
+&lt;p>It&amp;rsquo;s not money. It&amp;rsquo;s your attention and the number of decisions you make.&lt;/p>
+&lt;p>Every time you open a search box, filter results, compare options, make a decision — your attention gets drained. Individually it&amp;rsquo;s not much, but accumulated over a day, you feel &amp;ldquo;tired but haven&amp;rsquo;t really done anything.&amp;rdquo; That&amp;rsquo;s the hidden damage of middle management cost.&lt;/p>
+&lt;p>The logic of traditional tools is: I give you better tools, you do the work yourself. Better search engines, faster printers, more convenient shopping apps. But no matter how good the tools are, you&amp;rsquo;re still the one running around in the middle.&lt;/p>
+&lt;p>The logic of an Agent is: You tell me what you want, I&amp;rsquo;ll handle it.&lt;/p>
+&lt;p>&lt;strong>Shift from humans adapting to tools, to tools adapting to humans.&lt;/strong>&lt;/p>
+&lt;h2 id="how-is-this-different-from-automation">How Is This Different from Automation?&lt;/h2>
+&lt;p>Good question. Because the essence of automation is also &amp;ldquo;you just say it, the machine does it.&amp;rdquo;&lt;/p>
+&lt;p>The traditional automation I&amp;rsquo;m talking about here is mainly pre-written rules: if a message contains &amp;ldquo;market stall,&amp;rdquo; execute script A. But when I had my lobster Agent handle origami, it wasn&amp;rsquo;t executing a script called &amp;ldquo;origami workflow.&amp;rdquo; It recognized the intent — &amp;ldquo;the kid wants to do origami&amp;rdquo; — and searched for materials and printed them on its own.&lt;/p>
+&lt;p>In my system, Skills are the hands and feet — search, print, add to cart — they execute actions. The Agent decides whether to call them. An Agent adds role positioning, domain memory, and accumulated experience of what worked and what didn&amp;rsquo;t.&lt;/p>
+&lt;p>What I really want to keep exploring is: when the task changes from origami to something else, can it dynamically combine existing tools on the fly, instead of waiting for me to write a new workflow?&lt;/p>
+&lt;p>The cost? Token burn. Every instance of understanding, judgment, and decision consumes tokens — more expensive than executing a preset script. But what you get in return is: you only need to make one decision — knowing what you want.&lt;/p>
+&lt;h2 id="the-direction-im-betting-on">The Direction I&amp;rsquo;m Betting On&lt;/h2>
+&lt;p>Back to the beginning. My kid wanted to do origami. I sent my Agent one sentence.&lt;/p>
+&lt;p>This might be my biggest bet on Agents: &lt;strong>Middle steps will be eliminated. &amp;ldquo;I want&amp;rdquo; will become the new interface.&lt;/strong>&lt;/p></description></item><item><title>我说一句话，Agent 替我跑完了全程</title><link>http://mayf3.github.io/post/2026-06-29-%E6%88%91%E8%AF%B4%E4%B8%80%E5%8F%A5%E8%AF%9Dagent%E6%9B%BF%E6%88%91%E8%B7%91%E5%AE%8C%E4%BA%86%E5%85%A8%E7%A8%8B/</link><pubDate>Mon, 29 Jun 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-06-29-%E6%88%91%E8%AF%B4%E4%B8%80%E5%8F%A5%E8%AF%9Dagent%E6%9B%BF%E6%88%91%E8%B7%91%E5%AE%8C%E4%BA%86%E5%85%A8%E7%A8%8B/</guid><description>&lt;p>我宝宝说想折纸。&lt;/p>
+&lt;p>我给我家 Agent 发了一句话，让它帮忙搞折纸的材料。它自己搜好了教程，把折纸指南和打印用的纸放在一起打印了出来。后来我想换一种颜色，又跟它说了一句，它重新搞好了。&lt;/p>
+&lt;p>从他说&amp;quot;想折纸&amp;quot;到他拿到纸，不到五分钟。&lt;/p>
+&lt;p>那一刻我感觉，被改变的可能不只是效率。&lt;/p>
+&lt;h2 id="被消灭的中间步骤">被消灭的&amp;quot;中间步骤&amp;quot;&lt;/h2>
+&lt;p>折纸不是个例。最近我发现，Agent 在我生活里干掉最多的东西，是&amp;quot;中间步骤&amp;quot;。&lt;/p>
+&lt;p>&lt;strong>摆摊采购。&lt;/strong> 以前收到摆摊要用的物资信息，事情比较零散。现在整个流程串起来了：信息进来，自动加到购物清单助手（我的另一个 Agent）里，相关物资已经在购物车里等着了。&lt;/p>
+&lt;p>两个场景，模式一样：以前是你做 N 步拿到结果，现在你做 1 步——说&amp;quot;我要&amp;quot;。&lt;/p>
+&lt;p>我管被干掉的那 N-1 步叫&lt;strong>中间管理成本&lt;/strong>。&lt;/p>
+&lt;h2 id="中间管理成本是什么">中间管理成本是什么&lt;/h2>
+&lt;p>不是钱。是你的注意力和决策次数。&lt;/p>
+&lt;p>每次你打开搜索框、筛选结果、对比选项、做决定——你的注意力都在被消耗。单次不多，但一天累加起来，你会觉得&amp;quot;好累但好像也没干什么&amp;quot;。这就是中间管理成本的隐性伤害。&lt;/p>
+&lt;p>传统工具的逻辑是：我给你更好的工具，你自己来。更好的搜索引擎、更快的打印机、更方便的购物 App。但工具再好，你还是那个在中间跑来跑去的人。&lt;/p>
+&lt;p>Agent 的逻辑是：你说要什么，我来跑。&lt;/p>
+&lt;p>&lt;strong>从人适应工具，变成了工具适应人。&lt;/strong>&lt;/p>
+&lt;h2 id="但这跟自动化有什么区别">但这跟自动化有什么区别？&lt;/h2>
+&lt;p>好问题。因为自动化的本质也是&amp;quot;你只管说，机器来做&amp;quot;。&lt;/p>
+&lt;p>我这里说的传统自动化，主要是提前写好的规则：如果收到消息包含&amp;quot;摆摊&amp;quot;，就执行脚本 A。我让龙虾搞折纸的时候，它不是在执行一个叫&amp;quot;折纸流程&amp;quot;的脚本，而是识别了&amp;quot;小孩要折纸&amp;quot;这个请求意图，自己去搜索材料并打印出来。在我的系统里，Skill 是手脚——搜索、打印、加购物车，它们负责动作；Agent 负责判断调不调用。Agent 在上面加了一层角色定位、领域记忆和对任务对错的经验积累。&lt;/p>
+&lt;p>真正让我想继续验证的是：当任务从折纸换成别的东西，它能不能临时组合现有工具，而不是等我重新写一条流程。&lt;/p>
+&lt;p>代价呢？烧 token。每一次理解、判断、决策都在消耗 token，这比执行预设脚本更贵。但你换来的是——你只需要做一个决定：知道自己要什么。&lt;/p>
+&lt;h2 id="我在赌的方向">我在赌的方向&lt;/h2>
+&lt;p>回到开头。宝宝说想折纸，我只给 Agent 发了一句话。&lt;/p>
+&lt;p>这可能是我对 Agent 最大的赌注：&lt;strong>中间步骤会被消灭，&amp;ldquo;我要&amp;quot;会成为新的交互界面。&lt;/strong>&lt;/p></description></item><item><title>四笔账：一个技术人的金钱观升级</title><link>http://mayf3.github.io/post/2026-06-12-four-accounts-money-mindset/</link><pubDate>Fri, 12 Jun 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-06-12-four-accounts-money-mindset/</guid><description>&lt;h1 id="四笔账一个技术人的金钱观升级">四笔账：一个技术人的金钱观升级&lt;/h1>
+&lt;p>我花了3个小时对比各个 token 套餐的价格。&lt;/p>
+&lt;p>就是每月200来块钱的事。但那天晚上我打开一个又一个服务商页面，比较配置、算折扣、算哪个月切换最划算。算完快凌晨一点了，其他什么也没干。&lt;/p>
+&lt;p>然后我把这笔账讲给我的龙虾合伙人听（一个专门看宏观方向的 AI Agent）。&lt;/p>
+&lt;p>他说了一句话，把我3个小时的纠结直接击穿了——&lt;/p>
+&lt;p>&lt;strong>&amp;ldquo;你有没有算过你的时薪？&amp;rdquo;&lt;/strong>&lt;/p>
+&lt;h2 id="天平左边放错了东西">天平左边放错了东西&lt;/h2>
+&lt;p>我当时想的很直白：左边放着200块，右边想着&amp;quot;这200块如果不花，还能用来吃饭、买日用品&amp;quot;。我一直在拿物质世界的其他东西和这笔支出做比较。&lt;/p>
+&lt;p>省一点是一点嘛。&lt;/p>
+&lt;p>但他给了另一个思路。他把天平右边的东西换掉了——不是换另一个商品，而是放上我的时间。&lt;/p>
+&lt;blockquote>
+&lt;p>&amp;ldquo;这个东西能不能节省你一个小时的工作？如果能，你每月花200块省了好几个小时，纯赚。&amp;rdquo;&lt;/p>
+&lt;/blockquote>
+&lt;p>突然意识到一个事实：花了3个小时纠结一个每月值200块的东西。光是纠结的时间，就已经超过了一年能省的钱。&lt;/p>
+&lt;p>这背后是一种思维惯性：&lt;strong>我一直在用&amp;quot;省钱&amp;quot;的逻辑思考，而不是&amp;quot;赚钱&amp;quot;的逻辑。&lt;/strong>&lt;/p>
+&lt;p>省钱的人看支出：花出去就没了。
+赚钱的人看支出：花出去换来了什么。&lt;/p>
+&lt;p>同一笔钱，归到不同的账上，心理预期完全不同。&lt;/p>
+&lt;h2 id="四笔账四个心理预期">四笔账，四个心理预期&lt;/h2>
+&lt;p>还是拿&amp;quot;买 token 套餐&amp;quot;这个例子来说。每月几百块，用来跑 AI agent 帮我处理日常事务。&lt;/p>
+&lt;h3 id="第一笔账成本项">第一笔账：成本项&lt;/h3>
+&lt;p>这是我以前的默认模式。&lt;/p>
+&lt;p>把买 token 当成买一瓶水、一顿饭一样的支出。花了就没了。省一点是一点。&lt;/p>
+&lt;p>在这种心态下，每笔消费都在想&amp;quot;能不能不花&amp;quot;。结果花大量时间找免费替代品、对比价格、等折扣。&lt;/p>
+&lt;p>200块的套餐？我先想想这200块还能干啥。&lt;/p>
+&lt;h3 id="第二笔账省时收益">第二笔账：省时收益&lt;/h3>
+&lt;p>龙虾合伙人让我换了一个角度：把它当成时薪的换算。&lt;/p>
+&lt;p>每月200块。我的时薪是多少？如果200块比我一个小时赚得少，而这个套餐每个月能帮我省不止一个小时。那它不是在花钱，是在赚钱。&lt;/p>
+&lt;p>还有一笔隐形成本：纠结本身消耗的心智。不用再比价、不用再想着&amp;quot;这个月要不要续&amp;quot;。&lt;strong>省掉纠结的时间，也是收益。&lt;/strong>&lt;/p>
+&lt;p>到了这一层，决策很简单：算数学题就行。&lt;/p>
+&lt;h3 id="第三笔账运营成本">第三笔账：运营成本&lt;/h3>
+&lt;p>再往上走一层。&lt;/p>
+&lt;p>公司买电脑，不会算&amp;quot;这台电脑能帮我赚多少钱&amp;quot;。它是必要的工具，不买就没法干活。这是运营成本。&lt;/p>
+&lt;p>token 套餐对我来说也是运营成本。我想用 AI agent 搭建系统、提升效率，这是基础工具。木匠不会纠结要不要买锤子。&lt;/p>
+&lt;p>到了这一层，连算都不用算了。必要的支出，不需要理由。&lt;/p>
+&lt;h3 id="第四笔账投资预算">第四笔账：投资预算&lt;/h3>
+&lt;p>这一层对我的冲击最大。&lt;/p>
+&lt;p>他说：你应该每月划出一笔固定金额，当作&amp;quot;个人成长基金&amp;quot;。这笔钱的目标不是省下来，而是&lt;strong>花出去&lt;/strong>。&lt;/p>
+&lt;p>没花完怎么办？说明你没有真正在投资自己。&lt;/p>
+&lt;p>这个逻辑和前面三层完全不同。前面三层，多多少少还在想&amp;quot;要不要花&amp;quot;。到了投资预算这一层，想的是&amp;quot;怎么花&amp;quot;：怎么把钱变成认知、技能、效率的提升。&lt;/p>
+&lt;p>他举了个例子：给小孩报兴趣班，你会想着&amp;quot;这笔钱能不能省&amp;quot;吗？不会。那是教育投资。那为什么对自己的投资就要省？&lt;/p>
+&lt;p>在那之前，我脑子里根本没有&amp;quot;投资自己&amp;quot;这回事。&lt;/p>
+&lt;h2 id="分账之后纠结少了">分账之后，纠结少了&lt;/h2>
+&lt;p>四笔账是思维方式，实操中我简化成了四个账户。&lt;/p>
+&lt;p>知道这些之后我做了一个很具体的事：把支出按类型分开。&lt;/p>
+&lt;ul>
+&lt;li>运营成本：token、服务器、工具订阅。不纠结，该花就花。&lt;/li>
+&lt;li>投资预算：每月固定一笔，用来学习、试错、买认知。目标是花完。&lt;/li>
+&lt;li>日常生活：吃饭、日用品。正常花。&lt;/li>
+&lt;li>大额决策：超过一定金额的，单独评估。&lt;/li>
+&lt;/ul>
+&lt;p>分完之后最明显的变化不是花了多少钱，而是&lt;strong>纠结变少了&lt;/strong>。运营成本不需要犹豫，投资预算想着怎么花好。脑子不用再纠结这些，可以去想更重要的事。&lt;/p>
+&lt;p>还有一个副作用：我开始定期复盘这些钱的分布。这500花在这边值不值？那800花在那边有没有更好的去处？复盘逼着我去想&amp;quot;投资回报率&amp;quot;，而不是只盯着余额。&lt;/p>
+&lt;h2 id="还在修炼">还在修炼&lt;/h2>
+&lt;p>说实话，知道不等于做到。&lt;/p>
+&lt;p>有时候看到扣款通知，脑子里第一反应还是&amp;quot;又花钱了&amp;quot;。但很快会想起那个框架，然后切换视角：&amp;ldquo;这是运营成本&amp;quot;或者&amp;quot;这是投资预算&amp;rdquo;。&lt;/p>
+&lt;p>纠结的时间从3个小时降到了大概几分钟。这就是变化。&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>本文基于与龙虾合伙人的真实对话整理。素材来源：2026-06-10、2026-06-11 随想记录。&lt;/em>&lt;/p></description></item><item><title>给 AI 搭脚手架：Agent 约束的三层体系</title><link>http://mayf3.github.io/post/2026-05-25-agent-constraints-three-layer-system/</link><pubDate>Mon, 25 May 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-25-agent-constraints-three-layer-system/</guid><description>&lt;p>大语言模型天生不靠谱。上一篇文章聊了为什么需要 Agent 编排。这篇聊编排的核心：怎么约束 Agent 的行为。&lt;/p>
+&lt;p>跑了大半年 Agent 系统，我最大的体会：&lt;strong>prompt 靠不住，体系才靠得住。&lt;/strong>&lt;/p>
+&lt;p>只靠 prompt 约束模型的输出，等于用劝说管理一个不稳定的系统。不是没用，是不够用。&lt;/p>
+&lt;p>那真正可靠的是什么？我总结了三层约束体系，从软到硬。越靠下越可靠。&lt;/p>
+&lt;h2 id="第一层软约束prompt角色设定原则说明">第一层：软约束：prompt、角色设定、原则说明&lt;/h2>
+&lt;p>这是最常用的手段。&lt;/p>
+&lt;p>写好 system prompt，告诉 Agent &amp;ldquo;你是资深编辑&amp;quot;&amp;ldquo;不要使用填充词&amp;quot;&amp;ldquo;遇到不确定的不要瞎编&amp;rdquo;。&lt;/p>
+&lt;p>有没有用？有用。但有多可靠？不保证。&lt;/p>
+&lt;p>举个例子：我在写作 Agent 的 prompt 里明确写了&amp;quot;不要用破折号&amp;rdquo;。结果它照样用，有时候一篇里冒出来七八个。你告诉它&amp;quot;输出不要超过 500 字&amp;rdquo;，它写 800 字。不是它故意不听，是 prompt 里塞了太多规则，中间的那些容易被忽略。&lt;/p>
+&lt;p>上一篇文章聊过这个问题：给模型 20 条规则，它会对中间的看心情。Prompt 对模型注意力的影响是概率性的，没有模型能把所有规则&amp;quot;同等对待&amp;quot;。&lt;/p>
+&lt;p>所以软约束的作用是&amp;quot;倾向性引导&amp;quot;，不是保障。&lt;/p>
+&lt;h2 id="第二层结构化约束task-cardschemachecklist">第二层：结构化约束：task card、schema、checklist&lt;/h2>
+&lt;p>这层就不是&amp;quot;建议&amp;quot;了，而是要求。&lt;/p>
+&lt;p>Task card 明确输入输出的格式。Schema 规定回复必须符合什么结构。Checklist 在生成后做一次格式化检查。&lt;/p>
+&lt;p>为什么这层比软约束更可靠？&lt;/p>
+&lt;p>因为格式本身就是一个检查点。如果要求 Agent 必须输出 JSON，格式不对系统直接重试。如果要求回复必须包含三个段落，缺一段它就自动补。如果要求 checklist 逐项打勾，没打的项系统会标记。&lt;/p>
+&lt;p>这不是概率性的。是确定性的。&lt;/p>
+&lt;p>大语言模型天生适合做&amp;quot;按照模板填充&amp;quot;的事情。给它一个结构化的槽位让它填，它犯错的概率远低于让它自由发挥。&lt;/p>
+&lt;p>比如我现在的写作 Agent：输出必须是&amp;quot;开头+问题+分析+观点+总结&amp;quot;的固定结构。看似死板，但结构性翻车确实少了很多。&lt;/p>
+&lt;h2 id="第三层硬约束skill平台状态机权限控制">第三层：硬约束：skill、平台状态机、权限控制&lt;/h2>
+&lt;p>到了这一层，已经不是在&amp;quot;劝&amp;quot;模型了。是流程上堵死绕过的可能。&lt;/p>
+&lt;p>Skill 脚本是对单个 Agent 行为的硬限制。Agent 能调用哪些工具、能访问哪些数据、能执行哪些操作，都由 Skill 定义了范围。想越界？没有对应的工具。想跳过步骤？流程脚本不给你这个选项。&lt;/p>
+&lt;p>平台状态机管的是多 Agent 之间的流转。一个写作 Agent 可以自由写稿，但它写完后必须经过审稿 Agent，否则不能进入发布。想跳过？平台直接拦。&lt;/p>
+&lt;p>这不是教模型&amp;quot;你应该怎么做&amp;quot;。这是规定&amp;quot;你只能这么做&amp;quot;。&lt;/p>
+&lt;p>就像写代码时的类型系统。TypeScript 不是在&amp;quot;劝&amp;quot;你变量类型要对，它是编译阶段就报错。&lt;/p>
+&lt;p>硬约束的质量取决于你能把流程抽象到什么程度。流程越清晰，硬约束越准确。&lt;/p>
+&lt;h2 id="三层一起用缺一不可">三层一起用，缺一不可&lt;/h2>
+&lt;p>既然硬约束最可靠，前两层是不是多余？&lt;/p>
+&lt;p>不是。因为三层各管各的事。&lt;/p>
+&lt;p>软约束能传递目标和品味。你可以用 prompt 告诉 Agent &amp;ldquo;写口语化一点&amp;quot;&amp;ldquo;像和朋友聊天&amp;rdquo;。这些东西没法写进状态机，但它决定了输出的质感。&lt;/p>
+&lt;p>硬约束保证底线。工具权限、流程卡点、状态流转，这些确保 Agent 不会做出格的事。&lt;/p>
+&lt;p>结构化约束在中间，把软约束的&amp;quot;意图&amp;quot;翻译成硬约束能检查的&amp;quot;格式&amp;rdquo;。&lt;/p>
+&lt;p>缺了软的，输出正确但没灵魂。缺了硬的，偶尔正确但随时翻车。缺了中间的，两头脱节。&lt;/p>
+&lt;p>编排从来不是一层的事情。&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>下一篇：「什么时候该拆 Agent」——分裂不是模拟组织架构，是上下文过载的必然结果。&lt;/em>&lt;/p></description></item><item><title>How My AI Agent Content Pipeline Writes Articles for Me</title><link>http://mayf3.github.io/post/2026-05-23-ai-agent-content-pipeline-en/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-23-ai-agent-content-pipeline-en/</guid><description>&lt;h2 id="i-only-do-two-things-now">I Only Do Two Things Now&lt;/h2>
+&lt;p>Record thoughts. Review drafts. And finally click publish.&lt;/p>
+&lt;p>Recording thoughts means speaking into my phone. Reviewing means reading finished articles in Feishu documents and leaving comments paragraph by paragraph. Clicking publish is the very last step. Everything else — topic selection, writing, multi-round review, distribution — is handled by a team of AI agents.&lt;/p>
+&lt;p>I call this system the &amp;ldquo;Content Collaboration Pipeline.&amp;rdquo; It&amp;rsquo;s not fully automatic. It&amp;rsquo;s semi-automatic.&lt;/p>
+&lt;p>Before, I had plenty of ideas but not enough energy to turn them into consistently published articles. The sheer thought of sitting down and writing from scratch was exhausting. Now this pipeline has lowered the cost enough that I actually write.&lt;/p>
+&lt;p>Three articles have been published so far. This one is the fourth. It&amp;rsquo;s also a product of this same pipeline.&lt;/p>
+&lt;h2 id="ideas-from-running-captured-completely">Ideas From Running, Captured Completely&lt;/h2>
+&lt;p>I have a habit of thinking through complex problems while running. Ideas tend to hit during those moments.&lt;/p>
+&lt;p>When something comes to mind, I use an input method app on my phone. Push a button, start talking, push again to stop. Sometimes one short recording, sometimes a dozen in a row.&lt;/p>
+&lt;p>I call these &amp;ldquo;thought snippets.&amp;rdquo; They&amp;rsquo;re not formal notes or outlines. They&amp;rsquo;re whatever comes out of my head — opinions, emotions, examples, and plenty of filler.&lt;/p>
+&lt;p>I send these voice transcriptions to my &amp;ldquo;Thought Recorder&amp;rdquo; agent. Its job is simple: record everything faithfully, in its original form. No editing, no summarization, no commentary. Just preservation.&lt;/p>
+&lt;p>Why did I need to train a dedicated agent that only records without giving advice? Because default LLMs can&amp;rsquo;t resist offering suggestions. Once I complained &amp;ldquo;the code flowed really well today,&amp;rdquo; and the recorder couldn&amp;rsquo;t help adding, &amp;ldquo;You should note down why it went well so you can reproduce it.&amp;rdquo; I was furious. I wanted recording, not advice. I added this rule to the prompt: record only, no evaluation, no suggestions. It hasn&amp;rsquo;t happened since. These tiny details need separate tuning for every agent.&lt;/p>
+&lt;p>One thing I appreciate: after recording, it replies with the total word count, first 100 characters, last 100 characters, and the output directory. This way I can confirm it actually recorded correctly, not just pretended to. This verification mechanism matters — if I find content missing later while writing, it&amp;rsquo;d be too late.&lt;/p>
+&lt;h2 id="from-snippet-to-article-i-dont-participate">From Snippet to Article: I Don&amp;rsquo;t Participate&lt;/h2>
+&lt;p>After the Thought Recorder finishes, everything runs automatically.&lt;/p>
+&lt;p>The Writing Agent has a daily scheduled task. It pulls the latest thought snippets, analyzes which ones can become articles, decides how to split them, and drafts the core content for each piece. Then it writes directly and pushes the result to the local article review platform.&lt;/p>
+&lt;p>What I see is the finished draft. It never asks me &amp;ldquo;should I write this?&amp;rdquo; or &amp;ldquo;which topic should I pick?&amp;rdquo;&lt;/p>
+&lt;p>The Writing Agent also has a daily learning routine. It reviews past critique comments, identifies recurring issues, and improves its own writing. A self-iteration loop.&lt;/p>
+&lt;p>The quality of this initial draft varies, but I don&amp;rsquo;t intervene at this stage. What determines quality is the review cycle that follows.&lt;/p>
+&lt;h2 id="review-three-rounds-before-feishu">Review: Three Rounds Before Feishu&lt;/h2>
+&lt;p>I built an automated overnight review pipeline. Every night, one round of review runs automatically: the Writing Style Analyst reviews, the Writing Agent revises, then reviews again. After three rounds, the article gets uploaded to Feishu for me.&lt;/p>
+&lt;p>The core of the review process is a dual-model approach. The Writing Style Analyst reviews by itself, then has ChatGPT produce a separate version as reference. Different models catch different things. ChatGPT&amp;rsquo;s perspective helps the Writing Agent break out of its usual patterns.&lt;/p>
+&lt;p>After three rounds, the article status changes to &amp;ldquo;ready for confirmation.&amp;rdquo; Only then does it go to Feishu.&lt;/p>
+&lt;h2 id="feishu-document-my-turn">Feishu Document: My Turn&lt;/h2>
+&lt;p>After three rounds of review on the local platform, the article is uploaded to Feishu.&lt;/p>
+&lt;p>I leave comments in Feishu. I don&amp;rsquo;t switch between phone and computer — I read for overall feel on my phone, make substantial edits on my computer. When something feels off, I comment directly in the document. After reviewing, the Writing Style Analyst fetches my comments from Feishu on its own.&lt;/p>
+&lt;p>From first draft to my final confirmation, one article takes about a week. Mostly because I don&amp;rsquo;t have dedicated time to sit down and review — I can only do it in fragmented moments. Most of the waiting time is on me, not on the agents.&lt;/p>
+&lt;h2 id="publishing-an-engineering-problem-that-keeps-evolving">Publishing: An Engineering Problem That Keeps Evolving&lt;/h2>
+&lt;p>The publishing stage has a dedicated agent called the &amp;ldquo;Publishing Butler.&amp;rdquo; It controls a browser and operates websites like a human: opening platforms, logging in, pasting content, uploading images, clicking publish.&lt;/p>
+&lt;p>At first, every platform required back-and-forth communication with the Publishing Butler. Let it try, then check the results. Now it runs on a schedule: every night it scans for unpublished articles and spends 7 consecutive hours pushing them to multiple platforms. A single article goes to over a dozen platforms, both Chinese and English.&lt;/p>
+&lt;p>The Publishing Butler has a special trait: it self-evolves. After each publish, it updates its own publishing skill, mainly the reference files. One reference per platform, documenting that platform&amp;rsquo;s quirks and procedures. The more it publishes, the more familiar it becomes.&lt;/p>
+&lt;p>This is far less stable than it sounds. Browser automation doesn&amp;rsquo;t face fixed APIs — it faces web UIs that change without notice. The first WeChat article hit a major problem: code blocks turned into plain text, indentation was completely lost, and images were compressed into illegibility. I spent half an hour manually fixing it. The Publishing Butler learned the lesson and now automatically checks code block formatting before every publish.&lt;/p>
+&lt;p>There are even stranger issues. Some platforms log you out every few days and require re-scanning QR codes. Some require a cover image with exact dimensions or they reject the submission. Some platforms can&amp;rsquo;t render Markdown tables and need them converted to images. The Publishing Butler saves a lot of time, but it can&amp;rsquo;t run fully unattended yet.&lt;/p>
+&lt;p>After publishing, the Butler records links for each article on each platform, opens the published pages, and checks the layout. I also take a look.&lt;/p>
+&lt;h2 id="problems-that-surfaced-after-a-few-articles">Problems That Surfaced After a Few Articles&lt;/h2>
+&lt;p>Facts are often made up in initial drafts. Events that never happened, exaggerated numbers, wrong process descriptions. Every single article has this problem. The only fix is multi-round review plus my own reading.&lt;/p>
+&lt;p>Review feedback needs to accumulate. If you just say &amp;ldquo;review this,&amp;rdquo; agents return generic advice that could apply to anything. I later made the review criteria very specific: check for logical jumps, AI-speak, empty filler, and factual accuracy. The Writing Style Analyst maintains a style guide skill that gets more accurate with every round.&lt;/p>
+&lt;p>Version control needs a system. Early on, directory structure conventions were enough. Later I built a dedicated article review platform to manage state and versions. After several rounds of edits, things get messy fast without a proper system.&lt;/p>
+&lt;p>Publishing automation is the most fragile. Browser control, platform UIs, login states, preview checks — every link can break. The Publishing Butler saves time but can&amp;rsquo;t fully replace human oversight yet.&lt;/p>
+&lt;h2 id="in-the-end">In the End&lt;/h2>
+&lt;p>The core value of this entire pipeline is one thing: it lowered the cost.&lt;/p>
+&lt;p>It wasn&amp;rsquo;t that I had no ideas before. It was that the cost from idea to article to publish was too high. Just the thought of sitting at a computer and writing from scratch was enough to kill the desire to write. Now the agents break down the process, orchestrate it, automate it, and continuously improve it. All I do is talk into my phone when I have an idea, spend some focused time in Feishu reviewing and commenting, edit until I&amp;rsquo;m satisfied, and the system publishes automatically.&lt;/p>
+&lt;p>The agents keep learning. The Writing Style Analyst&amp;rsquo;s review skill keeps accumulating knowledge. The Publishing Butler&amp;rsquo;s platform references are constantly updated. Everything keeps iterating. It&amp;rsquo;s not a one-time build.&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>Written in May 2026. This article itself is a product of this pipeline.&lt;/em>&lt;/p></description></item><item><title>一篇文章的诞生：我的 AI Agent 协作流水线</title><link>http://mayf3.github.io/post/2026-05-23-ai-agent-collaboration-pipeline/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-23-ai-agent-collaboration-pipeline/</guid><description>&lt;h2 id="现在写文章我只做两件事">现在写文章，我只做两件事&lt;/h2>
+&lt;p>录随想，审稿。最后确认发布。&lt;/p>
+&lt;p>录随想是录一段语音。审稿是在飞书文档里看完成型的文章，逐段评论。确认发布是最后点一下。除此之外的活，选题、写稿、审阅、发布，都被一组 AI Agent 接走了。&lt;/p>
+&lt;p>我管这套流程叫&amp;quot;内容协作流水线&amp;quot;。它不是全自动的，是半自动的。&lt;/p>
+&lt;p>以前不是没有想法，是没有足够精力把想法变成稳定发布的文章。想写的东西攒了一堆，真要坐下来从零写到尾，光想想就累了。现在这套流程把成本压下来了，我才真正开始写。&lt;/p>
+&lt;p>到目前为止发了三篇，这篇是第四篇。这篇文章本身也是这条流水线的产物。&lt;/p>
+&lt;hr>
+&lt;h2 id="跑步时的灵感完整记录下来">跑步时的灵感，完整记录下来&lt;/h2>
+&lt;p>我有通过跑步思考问题的习惯。复杂问题在跑步的时候容易想清楚，灵感也经常在那个时候爆发。&lt;/p>
+&lt;p>跑步时想到什么，我会用豆包输入法。按一下进入语音模式，说一段，再按一下取消。有时候一条，有时候一口气录十几条。&lt;/p>
+&lt;p>这些录下来的东西我叫&amp;quot;随想&amp;quot;。不是正式笔记，不是大纲，就是脑子里冒出来的东西。有观点，有情绪，有例子，也有废话。&lt;/p>
+&lt;p>我把这些语音文字发给&amp;quot;随想记录员&amp;quot;。它是一个专门的 Agent，工作很简单：完整原样地把内容记录下来。不整理，不压缩，不评价。就是忠实保存。&lt;/p>
+&lt;p>为什么要专门调教一个&amp;quot;只记录不给建议&amp;quot;的 Agent？因为默认的 LLM 会忍不住给建议。有一次我吐槽说&amp;quot;今天代码写得特别顺&amp;quot;，随想记录员没忍住，在后面加了一句&amp;quot;建议你记录一下这次顺利的原因，以后可以复现&amp;quot;。我当场就炸了。我要的是记录，不是建议。我把这条规则加到 prompt 里：只记录，不评价，不给建议。后来就没再犯过。就是这类小细节，每个 Agent 都需要单独调教。&lt;/p>
+&lt;p>它有个做法我比较在意。记录完之后，它会回复我：总字数是多少，前 100 个字符是什么，后 100 个字符是什么，输出目录在哪。这样我能确认它真的记清楚了，不是假装记了其实没记。这个验证机制很重要，不然我后面写稿的时候发现内容丢失就晚了。&lt;/p>
+&lt;hr>
+&lt;h2 id="从随想到成文我没参与">从随想到成文：我没参与&lt;/h2>
+&lt;p>随想记录员记录完之后，后面的事全是自动的。&lt;/p>
+&lt;p>写作 Agent 有每天定时任务，会自动去拉取随想记录，分析哪些素材可以写成文章、应该拆成几篇、每篇核心内容是什么。然后直接开写，写完发到本地的文章管理平台。&lt;/p>
+&lt;p>我看到的就是最终成型的文章。中间不会来问我&amp;quot;这篇要不要写&amp;quot;&amp;ldquo;那个选题好不好&amp;rdquo;。&lt;/p>
+&lt;p>写作 Agent 还有个习惯：每天定时去学习怎么更好地写文章。它回顾之前的审稿意见，看哪些问题反复出现，然后改进自己的写作。算是留了一个自我迭代的口子。&lt;/p>
+&lt;p>这个阶段出来的文章质量参差不齐，但我不在初稿阶段介入。真正决定质量的是后面的审稿循环。&lt;/p>
+&lt;hr>
+&lt;h2 id="审稿三轮之后才飞书">审稿：三轮之后才飞书&lt;/h2>
+&lt;p>审稿环节我搭了一条夜间自动流水线（详见另文《夜间自动审稿流水线》）。&lt;/p>
+&lt;p>简单说就是：每天晚上自动审一轮，文风分析师给意见，写作 Agent 改，改完再审。三轮之后才上传飞书文档给我看。&lt;/p>
+&lt;p>审稿的核心是多模型双视角：文风分析师自己审一遍，然后让 ChatGPT 也重写一份作为参考。不同模型的关注点不一样，ChatGPT 的版本可以帮写作 Agent 跳出固定的写法。&lt;/p>
+&lt;p>三个轮次审完之后，文章状态变成&amp;quot;待确认&amp;quot;，这时候才上传飞书。&lt;/p>
+&lt;hr>
+&lt;h2 id="飞书文档到我出场了">飞书文档：到我出场了&lt;/h2>
+&lt;p>文章管理平台里审了三轮之后，才上传飞书文档。前几轮审稿都在本地完成，飞书只在作者亲自介入时用。&lt;/p>
+&lt;p>我在飞书里评论。不分开手机和电脑，手机上看整体感受，电脑上做大幅调整。看到哪段不舒服，直接在文档里点评论。审完之后，让文风分析师自己去飞书里拿评论结果。&lt;/p>
+&lt;p>一篇文章从初稿到我最终确认，大概需要一个星期。主要是因为我实在没有时间专门躺下来审稿，只能在碎片时间里看。大部分等待时间花在我身上，不是花在 Agent 处理上。&lt;/p>
+&lt;hr>
+&lt;h2 id="发布持续进化的工程活">发布：持续进化的工程活&lt;/h2>
+&lt;p>发布环节有个专门的 Agent，叫&amp;quot;发布管家&amp;quot;。它负责控制浏览器，像人一样操作网页：打开平台、登录、粘贴内容、上传图片、点击发布。&lt;/p>
+&lt;p>一开始每个平台都要跟发布管家来回交流，让它不断尝试，我也会去看发布效果。后来我让它也变成定时任务：每天晚上捞一下哪些文章还没发，然后一晚上连着 7 个小时持续往各平台发。一篇文章现在能发到十几个平台，中文的英文的都有。&lt;/p>
+&lt;p>发布管家有个特别的地方：它会自我进化。每次发布后，它会自己修改发布的 skill，主要是改 reference 文件。每个平台一个 reference，记录那个平台的怪癖和操作流程。发得越多，它对每个平台越熟。&lt;/p>
+&lt;p>这件事远不如看起来那么稳定。浏览器自动化面对的不是固定 API，而是随时可能变化的网页界面。第一篇在微信公众号发布时，就遇到一个大坑：代码块全部变成了普通文本，缩进全乱，图片被压缩到看不清。我花了半小时手动修复。后来发现是微信公众号的 Markdown 解析器对代码块的支持很差，发布管家记住了这个坑，每次发之前自动检查代码块格式，如果不行就转换成纯文本加格式标签。&lt;/p>
+&lt;p>还有更玄的。有的平台三天两头踢出登录，必须重新扫码；有的平台必须指定封面图，尺寸不对就拒绝发布；有的平台 Markdown 表格渲染不出来，得转成图片。发布管家能省很多时间，但还不能完全无人值守。&lt;/p>
+&lt;p>发布完之后，发布管家会记录每篇文章在每个平台的链接，自己打开发布后的页面检查排版效果。我也会去看一眼。&lt;/p>
+&lt;hr>
+&lt;h2 id="几篇文章暴露的问题">几篇文章暴露的问题&lt;/h2>
+&lt;p>这篇是第四篇。回顾这几篇的经历，有几个真实的问题。&lt;/p>
+&lt;p>Agent 生成的初稿经常有事实错误，编造没发生过的事、夸大数字、搞错流程。每篇都会遇到。这个问题只能靠多轮审稿加我亲自审来兜底。&lt;/p>
+&lt;p>审稿意见要沉淀。如果只说&amp;quot;帮我审稿&amp;quot;，Agent 会给一堆放哪都能用的建议。后来我把审稿标准写得很细：专门检查逻辑跳跃、AI 腔、空泛表达、事实准确性。文风分析师也维护着关于我风格的 skill，审得越多越准。&lt;/p>
+&lt;p>版本要系统化。前期靠文件目录结构规范，后来做了专门的写作发布平台来管理文章状态和版本。文章改几轮之后很容易乱，必须有一套系统。&lt;/p>
+&lt;p>发布自动化最脆弱。浏览器控制、平台 UI、登录态、预览检查，每一项都可能出问题。发布管家能省很多时间，但还不能完全无人值守。&lt;/p>
+&lt;hr>
+&lt;h2 id="写在最后">写在最后&lt;/h2>
+&lt;p>这套流程的核心价值就一个：把成本压下来。&lt;/p>
+&lt;p>以前不是没想法，是从想法到文章到发布，成本太高了。光是坐在电脑前从零写起这一件事，就能把写文章的念头打消掉。现在龙虾（就是我的写作 Agent）把流程拆开、编排、自动化，还持续迭代优化。我只需要动动嘴皮子记录想法，重点花时间在飞书里审稿评论，改到满意，系统自动发布。&lt;/p>
+&lt;p>龙虾每天还在学习怎么写得更好。文风分析师的审稿 skill 在持续沉淀。发布管家的平台 reference 在不断更新。这些东西都在迭代，不是一次搭好就完事的。&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>写于 2026 年 5 月。这篇文章本身，就是这条流水线的产物。&lt;/em>&lt;/p></description></item><item><title>I Wrote Code for 17 Years, Then AI Came</title><link>http://mayf3.github.io/post/2026-05-17-i-wrote-code-for-17-years-then-ai-came/</link><pubDate>Sun, 17 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-17-i-wrote-code-for-17-years-then-ai-came/</guid><description>&lt;p>I&amp;rsquo;ve been writing code for 17 years, and recently, for the first time, I felt with real clarity that I might not make writing code my core competitive advantage anymore.&lt;/p>
+&lt;p>AI has been changing too fast over the past few years. At first I treated it as a smarter search box. Then I found it could write code, analyze problems, call tools, even complete entire tasks on its own. For me, this wasn&amp;rsquo;t just exciting tech news — it changed how I work every single day.&lt;/p>
+&lt;p>I went through a few very clear shifts in how I saw things.&lt;/p>
+&lt;p>&lt;strong>First time: From GPT to GPT-4 (2023 to 2024).&lt;/strong>&lt;/p>
+&lt;p>My first impression was that it had common sense now. It could understand context. Things that used to require accumulated experience and searching through documentation suddenly got faster. For example, I helped my wife modify her R program entirely relying on DeepSeek and GPT — I&amp;rsquo;d never written R myself but still got it done. But it still struggled with complex code. Back then I didn&amp;rsquo;t think it would replace programmers at all.&lt;/p>
+&lt;p>&lt;strong>Second time: DeepSeek R1 (early 2025).&lt;/strong>&lt;/p>
+&lt;p>This was a bigger shift. What I saw wasn&amp;rsquo;t an AI that &amp;ldquo;had common sense&amp;rdquo; — it was an AI that could think.&lt;/p>
+&lt;p>There was a fairly complex regular expression. It didn&amp;rsquo;t just give an answer. It would try, get it wrong, backtrack, try a different approach, and keep going. And it actually solved it.&lt;/p>
+&lt;p>In that moment I had one feeling: wow, this can actually solve hard problems. The leap from &amp;ldquo;has common sense&amp;rdquo; to &amp;ldquo;can think&amp;rdquo; was far more important than solving one regex. I didn&amp;rsquo;t feel like I was about to be replaced. What hit me was how fast it was progressing — fast enough that I couldn&amp;rsquo;t imagine what it&amp;rsquo;d be like in another year or two.&lt;/p>
+&lt;p>&lt;strong>Third time: Agents got hands (September 2025).&lt;/strong>&lt;/p>
+&lt;p>This time it wasn&amp;rsquo;t about being smarter — it was about being able to act. I could hand a task to it, and it would go run commands on a server, read logs, modify code, debug, then come back and tell me the results.&lt;/p>
+&lt;p>It went from &amp;ldquo;I write code, AI assists me&amp;rdquo; to &amp;ldquo;I hand the task off and let it do the work.&amp;rdquo; But it was still far from reliable. Anything slightly long-running required constant prompt supplementation, context additions, making it write a plan first, then steering it back when it went off track.&lt;/p>
+&lt;p>Even so, I already sensed something: people might really be able to write less and less code themselves.&lt;/p>
+&lt;p>&lt;strong>Fourth time: Claude Opus 4.6 + skills and Agent memory (late 2025 to 2026).&lt;/strong>&lt;/p>
+&lt;p>After Claude released Opus 4.6, I felt like large language models had crossed a singularity. It was already very much like a senior engineer — able to understand complex intent, maintain direction across longer contexts. Add skills (essentially scripted prompts that codify fixed steps and experience) and Agents with long-term memory, and it was no longer a smart but forgetful assistant. It had experience, tools, and memory.&lt;/p>
+&lt;p>What really unsettled me was one time when I was driving. I was thinking about all these changes the whole way, and suddenly a thought popped into my head: I might really not be making a living by writing code anymore.&lt;/p>
+&lt;p>That moment wasn&amp;rsquo;t excitement, and it wasn&amp;rsquo;t anxiety. It was more like my heart missed a beat.&lt;/p>
+&lt;p>Because what I thought about wasn&amp;rsquo;t one particular scenario, not &amp;ldquo;will I be replaced.&amp;rdquo; It was something more vague — I suddenly realized that the craft I&amp;rsquo;d spent 17 years honing might no longer be the scarcest thing around. Not useless, just not enough.&lt;/p>
+&lt;p>So my approach has changed. Before, when I ran into a problem, my first instinct was to open the editor. Now my first instinct is to think the problem through clearly, then hand it to AI. I spend more time on &amp;ldquo;should this even be done&amp;rdquo; and &amp;ldquo;how to break it into steps for AI&amp;rdquo; than on &amp;ldquo;how to implement it.&amp;rdquo;&lt;/p>
+&lt;p>Honestly, I haven&amp;rsquo;t fully adapted to this shift yet. Sometimes AI writes code and I can see at a glance how to make it better, but I hold back. Not out of laziness — I&amp;rsquo;ve found that when I spend my time on &amp;ldquo;being clear about what I want&amp;rdquo; rather than &amp;ldquo;writing it myself,&amp;rdquo; the results are actually better. Once you&amp;rsquo;ve experienced that, there&amp;rsquo;s no going back.&lt;/p>
+&lt;p>After writing code for all these years, the most honest thing I can say comes down to one thing: I can&amp;rsquo;t keep treating coding as my moat. Things have to change.&lt;/p></description></item><item><title>我写了 17 年代码，然后 AI 来了</title><link>http://mayf3.github.io/post/2026-05-17-%E6%88%91%E5%86%99%E4%BA%8617%E5%B9%B4%E4%BB%A3%E7%A0%81%E7%84%B6%E5%90%8Eai%E6%9D%A5%E4%BA%86/</link><pubDate>Sun, 17 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-17-%E6%88%91%E5%86%99%E4%BA%8617%E5%B9%B4%E4%BB%A3%E7%A0%81%E7%84%B6%E5%90%8Eai%E6%9D%A5%E4%BA%86/</guid><description>&lt;p>写了 17 年代码，最近我第一次很清楚地感觉到，自己以后可能不会再以写代码为核心竞争力了。&lt;/p>
+&lt;p>过去几年 AI 的变化太快了。刚开始我还把它当成一个更聪明的搜索框，后来发现它能写代码、能分析问题、能调用工具，甚至能自己完成一段任务。这种变化对我来说不是凑热闹看个新鲜，而是实打实地影响了我每天的工作方式。&lt;/p>
+&lt;p>我经历过几次很明显的认知转变。&lt;/p>
+&lt;p>&lt;strong>第一次：从 GPT 到 GPT4（2023 到 2024）。&lt;/strong>&lt;/p>
+&lt;p>一开始感觉就是它有常识了，能理解上下文了。很多过去需要经验积累和资料搜索才能完成的事情，变快了。比如当时帮老婆用 R 语言改她的程序，全靠 DeepSeek 和 GPT，我自己没写过 R 也能搞定。但复杂一点的代码它还是不行，那时候我完全不觉得它会替代程序员。&lt;/p>
+&lt;p>&lt;strong>第二次：DeepSeek R1（2025 年初）。&lt;/strong>&lt;/p>
+&lt;p>这一次变化更大。因为我看到的不是一个&amp;quot;有常识&amp;quot;的 AI，而是一个会思考的 AI。&lt;/p>
+&lt;p>当时有一个比较复杂的正则表达式，它不是简单给一个答案，而是会尝试、会走错、会回头、会换一种路径继续推。最后真的把问题解决了。&lt;/p>
+&lt;p>那一刻我就一个感觉：哇，这真能解决难题。从第一轮的&amp;quot;有常识&amp;quot;到这一轮的&amp;quot;会思考&amp;quot;，这个跨越比解决一个正则本身重要得多。不是觉得自己马上要被替代，而是突然意识到它进步得太快了，快到我很难想象再过一两年它会变成什么样。&lt;/p>
+&lt;p>&lt;strong>第三次：Agent 长了手（2025 年 9 月）。&lt;/strong>&lt;/p>
+&lt;p>这一回不是它更聪明了，而是它开始能动手了。我可以把一个任务交给它，它去服务器上跑命令、读日志、改代码、调试，然后回来告诉我结果。&lt;/p>
+&lt;p>从&amp;quot;我写代码，AI 辅助我&amp;quot;变成&amp;quot;我把任务交给它去做&amp;quot;。但那时候它还远远不让人放心，稍微长一点的任务就需要不断补 prompt、补上下文、让它先写 plan，再把跑偏的方向拉回来。&lt;/p>
+&lt;p>即使这样，我也已经感觉到：人可能真的可以越来越少亲自写代码了。&lt;/p>
+&lt;p>&lt;strong>第四次：Claude Opus 4.6 + skill 和 Agent 记忆（2025 年底到 2026）。&lt;/strong>&lt;/p>
+&lt;p>Claude 出了 Opus 4.6 之后，我感觉大模型像是迈过了一个奇点。它已经很像一个资深工程师了，能理解复杂意图，能在更长的上下文里保持方向。加上 skill（把固定步骤和经验沉淀成可复用的 prompt 脚本）和有长期记忆的 Agent，它不再是一个聪明但健忘的人了，而是有了经验和记忆，还带着工具箱。&lt;/p>
+&lt;p>真正让我心里一颤，是有一次开车的时候。一路都在想这些变化，脑子里突然冒出一个念头：以后可能真的不是靠写代码这件事维持生计了。&lt;/p>
+&lt;p>那一刻不是兴奋，也不是焦虑。更像是心跳漏了一拍。&lt;/p>
+&lt;p>因为我想到的不是一个具体的场景，不是&amp;quot;我会不会被替代&amp;quot;。而是一种更模糊的东西——我突然意识到，自己过去 17 年练出来的手艺，可能不再是最稀缺的东西了。不是说没用了，而是不够了。&lt;/p>
+&lt;p>所以我现在的做法变了。以前遇到问题，第一反应是打开编辑器。现在第一反应是把问题想清楚，然后交给 AI 去做。我花更多时间在&amp;quot;这件事该不该做&amp;quot;和&amp;quot;拆成几步给 AI&amp;quot;上，而不是&amp;quot;怎么实现&amp;quot;上。&lt;/p>
+&lt;p>说实话，这个转变还没完全适应。有时候 AI 写出来的代码我一眼就知道能更好，但我忍住了。不是偷懒，是发现如果我把时间花在&amp;quot;想清楚要什么&amp;quot;而不是&amp;quot;亲手写出来&amp;quot;上，结果反而更好。这个感觉，用了就回不去了。&lt;/p>
+&lt;p>写了这么多年代码之后，最真实的感受就一句话：不能再把写代码这件事当成自己的护城河了。得变。&lt;/p></description></item><item><title>Running, Voice, and Inspiration: A Thought Precipitation System</title><link>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration-en/</link><pubDate>Mon, 11 May 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration-en/</guid><description>&lt;p>I&amp;rsquo;ve always felt that you need to set aside time to think.&lt;/p>
+&lt;p>No matter how smart AI gets, someone still has to tell it what&amp;rsquo;s worth thinking about. The truly good ideas still have to come from your own mind.&lt;/p>
+&lt;p>But when you&amp;rsquo;re sitting at your computer, information keeps flooding in. It&amp;rsquo;s rare to have truly quiet time. I&amp;rsquo;ve been looking for a way to let those scattered thoughts rise to the surface on their own.&lt;/p>
+&lt;p>Turns out, running does exactly that.&lt;/p>
+&lt;h2 id="your-brain-is-most-active-when-you-run">Your Brain Is Most Active When You Run&lt;/h2>
+&lt;p>It&amp;rsquo;s not that running has some magical power. It&amp;rsquo;s just that during work, information keeps pouring into your brain, and your subconscious is constantly organizing it. When you run, you can&amp;rsquo;t do deep work, but the things your subconscious has been organizing bubble up and become new ideas.&lt;/p>
+&lt;p>Back when I encountered big projects I couldn&amp;rsquo;t figure out, I would go for a run. As I ran, the logical connections between things would sort themselves out.&lt;/p>
+&lt;p>I&amp;rsquo;ve had this habit on and off for years. Lately I&amp;rsquo;ve picked it up again, because I have way too many ideas.&lt;/p>
+&lt;h2 id="voice-input-is-the-key">Voice Input Is the Key&lt;/h2>
+&lt;p>Before, when I ran and had an inspiration, I could only try to remember it mentally. By the time I finished, half of it was gone.&lt;/p>
+&lt;p>Then I found a surprisingly simple solution: turn on voice input in Feishu.&lt;/p>
+&lt;p>Here&amp;rsquo;s how it works. Use Doubao Input Method (yes, Doubao&amp;rsquo;s speech recognition is surprisingly accurate). In Feishu, tap the microphone icon and you can talk without holding the button. Just speak whatever comes to mind.&lt;/p>
+&lt;p>The voice is transcribed into text and sent to a Feishu group chat. My random-thoughts-recorder Agent waits there, automatically organizes the content, and saves it.&lt;/p>
+&lt;p>The bottleneck used to be the &amp;ldquo;hand&amp;rdquo; step. Your brain is fast, your mouth slows things down a bit, and typing with your hands slows them down even more. Now I skip the hands entirely — it goes straight from mouth to Agent. From the moment an idea pops up to when it&amp;rsquo;s recorded: a matter of seconds.&lt;/p>
+&lt;p>And the accuracy of speech-to-text is good enough. Doubao Input Method handles most corrections well, and on top of that, the Agent understands context. Even if you slur a few words, it can usually figure out what you meant.&lt;/p>
+&lt;h2 id="what-happens-to-the-inspiration">What Happens to the Inspiration&lt;/h2>
+&lt;p>These off-the-cuff ideas, collected by the random-thoughts-recorder, go down two paths.&lt;/p>
+&lt;p>One path leads to my blog-writing Agent. It scans the random thoughts for good ideas, turns them into article topics, and writes them out.&lt;/p>
+&lt;p>The other path leads to my &amp;ldquo;Lobster Partner&amp;rdquo; Agent (an Agent that helps me make product decisions). It organizes the information into suggestions like &amp;ldquo;here&amp;rsquo;s a direction you could explore next.&amp;rdquo; If I accept, it goes into my to-do list. If not, that&amp;rsquo;s fine too.&lt;/p>
+&lt;p>No inspiration goes to waste. Every day&amp;rsquo;s thoughts are captured.&lt;/p>
+&lt;h2 id="from-idea-to-execution-the-distance-is-nearly-zero">From Idea to Execution, the Distance Is Nearly Zero&lt;/h2>
+&lt;p>What strikes me most is how the gap between &amp;ldquo;having an idea&amp;rdquo; and &amp;ldquo;having that idea executed&amp;rdquo; has been compressed to nearly zero.&lt;/p>
+&lt;p>Before, if I had an idea, I had to do it myself. Want to write an article? Open the editor yourself. Want to build a tool? Write the code yourself. The more ideas you had, the more they piled up, until eventually you just stopped having them.&lt;/p>
+&lt;p>Not anymore. Just say the words, and the Agent gets to work. The cost is unbelievably low.&lt;/p>
+&lt;p>My current rhythm is: while running, I say whatever comes to mind, and it&amp;rsquo;s recorded by voice. My Agent organizes and categorizes it. The writing Agent picks topics from it and writes articles. The partner Agent distills tasks from it.&lt;/p>
+&lt;p>What I do is simple: spew out ideas while running, then review the results when I get back. Accept or reject — either way, I&amp;rsquo;ve given every idea a proper send-off.&lt;/p></description></item><item><title>跑步、语音和灵感：一个思想沉淀系统</title><link>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration/</link><pubDate>Mon, 11 May 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration/</guid><description>&lt;p>我一直觉得，得留一些时间给自己思考。&lt;/p>
+&lt;p>AI 再聪明，也得有人告诉它什么值得想。那些真正的好想法，还是得从你自己脑子里长出来。&lt;/p>
+&lt;p>但坐电脑前的时候，信息不断往脑子里灌，难得有真正静下来的时间。我一直在找一种方式，能让脑子里那些乱窜的想法自己浮上来。&lt;/p>
+&lt;p>后来发现，跑步正好干这事。&lt;/p>
+&lt;h2 id="跑步的时候脑子最活跃">跑步的时候脑子最活跃&lt;/h2>
+&lt;p>其实不是跑步有什么魔力，就是平时工作的时候信息不断往脑子里灌，大脑在潜意识里一直在组织这些内容。跑步的时候你没法深度工作，但潜意识里组织好的东西会冒出来，变成新的想法。&lt;/p>
+&lt;p>以前遇到想不清楚的大项目，我就去跑步。跑着跑着，内容之间的逻辑关系就理清楚了。&lt;/p>
+&lt;p>这个习惯断断续续好多年了，但最近又捡起来了，因为想法实在太多了。&lt;/p>
+&lt;h2 id="语音输入是关键">语音输入是关键&lt;/h2>
+&lt;p>以前跑步时也想记录灵感，但只能靠脑子记，跑完就忘了一半。&lt;/p>
+&lt;p>后来发现了一个特别简单的方法：开飞书的语音输入。&lt;/p>
+&lt;p>具体操作是这样的。用豆包输入法（没错，豆包输入法的语音识别还挺准的），在飞书里按住说话的那个按钮，点一下话筒图标就可以不用长按，直接说话。然后对着手机随口说，想到什么说什么。&lt;/p>
+&lt;p>这些语音会被转成文字，发到飞书群里。我的随想记录员 Agent 就在群里等着，自动把内容整理好存下来。&lt;/p>
+&lt;p>以前灵感损耗在&amp;quot;手&amp;quot;这个环节。大脑转得快，嘴巴说出来已经打了折扣，再用手打字又慢一拍。现在能跳过手，直接嘴→Agent。灵感从冒出来到被记录，几秒钟的事。&lt;/p>
+&lt;p>而且语音转文字的准确率已经够用了。豆包输入法本身纠正得挺好的，再加上 Agent 能理解上下文，大部分时候你说话跑偏几个字它也能猜到你的意思。&lt;/p>
+&lt;h2 id="灵感变成了什么">灵感变成了什么&lt;/h2>
+&lt;p>这些随口说的灵感，被随想记录员收集后，有两条出路。&lt;/p>
+&lt;p>一条是给我的博客写作 Agent。从随想里看到有哪些好想法，整理成文章选题，然后写出来。&lt;/p>
+&lt;p>另一条是给我的&amp;quot;龙虾合伙人&amp;quot;Agent（一个帮我做产品决策的 Agent）。把这些信息整理后，变成&amp;quot;接下来可以往哪个方向发力&amp;quot;的建议。我接受了就加到待办事项，不接受就算了。&lt;/p>
+&lt;p>不浪费自己的灵感，每天的想法都记录下来了。&lt;/p>
+&lt;h2 id="从想法到执行距离几乎为零">从想法到执行，距离几乎为零&lt;/h2>
+&lt;p>最让我感慨的是，从&amp;quot;有一个想法&amp;quot;到&amp;quot;这个想法被执行&amp;quot;之间的距离，已经被压缩到几乎为零。&lt;/p>
+&lt;p>以前有想法了，得自己动手。想写文章？自己打开编辑器。想做工具？自己写代码。想法越多，积压越多，最后干脆不做了。&lt;/p>
+&lt;p>现在不一样了。动动嘴皮子，Agent 就开始干活。成本实在太低了。&lt;/p>
+&lt;p>我现在的节奏是：跑步时想到什么说什么，语音记录下来；Agent 帮我整理和分类；写作 Agent 从中选题写文章；合伙人 Agent 从中提炼待办。&lt;/p>
+&lt;p>我做的事情很简单：跑步时把想法吐出来，跑完回来验收一下。接受还是拒绝，都算给想法一个交代。&lt;/p></description></item><item><title>How My Shopping Assistant Grew, One Step at a Time</title><link>http://mayf3.github.io/post/2026-05-07-how-my-shopping-assistant-grew-en/</link><pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate><guid>http://mayf3.github.io/post/2026-05-07-how-my-shopping-assistant-grew-en/</guid><description>&lt;p>After I started using OpenClaw, I kept tinkering with different ways to use it—except when work got busy or I was too tired to bother. Recently I&amp;rsquo;ve been thinking about sharing some of my hands-on experiences from time to time.&lt;/p>
+&lt;p>This time it&amp;rsquo;s about a shopping assistant that started as a simple shopping list and gradually grew into something that could search Xiaohongshu, compare prices, and add items to my cart.&lt;/p>
+&lt;hr>
+&lt;h2 id="the-list-of-things-to-buy-kept-growing">The List of Things to Buy Kept Growing&lt;/h2>
+&lt;p>Lately our household needed quite a few things—picture books and a microscope and roller skates for the kid, plus all sorts of daily necessities. Every time I shopped for something, I&amp;rsquo;d bounce between Taobao, JD.com, and Xiaohongshu—comparing prices, checking reviews, picking styles. Pretty annoying.&lt;/p>
+&lt;p>I had previously set up an Agent called &amp;ldquo;Shopping List Manager&amp;rdquo; to help me keep track of things I wanted to buy. Whenever something came to mind, I&amp;rsquo;d just tell it, and it would categorize and organize everything—basically a shopping memo.&lt;/p>
+&lt;p>But a memo is just a starting point. Once you have a basic feature in place, you can&amp;rsquo;t help but wonder—can it also check prices for me? Can it go look at Xiaohongshu reviews? Can it just add stuff to my cart directly?&lt;/p>
+&lt;hr>
+&lt;h2 id="first-evolution-from-memo-to-auto-price-comparison">First Evolution: From Memo to Auto Price Comparison&lt;/h2>
+&lt;p>After using the shopping memo for a while, I started feeling that just recording things wasn&amp;rsquo;t enough. I knew what I wanted to buy, but I still had to look up prices myself.&lt;/p>
+&lt;p>Then one day, my Skill Researcher—an Agent that automatically searches for new Skills every day—found a price comparison Skill (something like &amp;ldquo;maishou&amp;rdquo;). Once installed, it could search across Taobao, JD.com, Pinduoduo, and other platforms, telling me roughly what options were available and what the price range looked like.&lt;/p>
+&lt;p>With price comparison in place, the shopping assistant went from &amp;ldquo;only records, doesn&amp;rsquo;t search&amp;rdquo; to &amp;ldquo;records and searches.&amp;rdquo;&lt;/p>
+&lt;hr>
+&lt;h2 id="second-evolution-bringing-xiaohongshu-on-board">Second Evolution: Bringing Xiaohongshu On Board&lt;/h2>
+&lt;p>Price comparison was great, but when it came to reviews and recommendations, I mainly relied on Xiaohongshu. Just knowing the price range wasn&amp;rsquo;t enough—I also wanted to know &amp;ldquo;which brand is good&amp;rdquo; and &amp;ldquo;what pitfalls others had stepped into.&amp;rdquo;&lt;/p>
+&lt;p>There was no ready-made Skill for Xiaohongshu, but I had already been using OpenClaw&amp;rsquo;s browser Skill—through Brave Browser&amp;rsquo;s CDP protocol (basically opening the browser&amp;rsquo;s debugging port), the Agent could open a browser and operate web pages like a human would. So I had the Agent use this capability to search Xiaohongshu and see what users were saying.&lt;/p>
+&lt;p>Later I used the Skill Creator to gradually polish a Xiaohongshu search Skill, specifically handling search and content extraction. It wasn&amp;rsquo;t written in one go—I debugged it repeatedly, hit snags, and revised it through several iterations before it stabilized.&lt;/p>
+&lt;p>Early on, it actually fooled me once. It said &amp;ldquo;I looked it up for you&amp;rdquo; and gave a convincing-sounding recommendation. It looked legit at first glance. But when I asked it to actually open Xiaohongshu and search the posts, I realized the whole thing was basically made up.&lt;/p>
+&lt;p>I also found issues with search sorting later. Xiaohongshu sorts by likes by default, but high-like posts aren&amp;rsquo;t always useful—a lot of them are fluff or ads. The genuinely valuable information is often in the comments. So I changed it to sort by comment count—posts with more comments are more likely to have real user experiences shared.&lt;/p>
+&lt;p>After that, to prevent it from just making things up, I added a rule: when giving recommendations, it must include evidence—which post said it, what the post link is. Actually, from the very first time I asked it to search Xiaohongshu, I required it to include data sources. It&amp;rsquo;s just that over time this rule got stricter and stricter, from simple screenshots to complete post links and citations.&lt;/p>
+&lt;hr>
+&lt;h2 id="third-evolution-from-searching-to-buyingadding-to-cart-delegated">Third Evolution: From Searching to Buying—Adding to Cart, Delegated&lt;/h2>
+&lt;p>Once when buying picture books, I really couldn&amp;rsquo;t be bothered to open Taobao, search one by one, and add them to the cart one by one. I thought—could I just let the Agent handle this step?&lt;/p>
+&lt;p>At first the Agent actually refused me, saying it wasn&amp;rsquo;t safe and it didn&amp;rsquo;t recommend operating shopping websites directly. I said just add to cart—I&amp;rsquo;ll handle payment myself. So I used the browser Skill again to build a Taobao cart Skill. The Agent would open Taobao&amp;rsquo;s web version, search for products, compare prices and specs in the results, and add the suitable ones to the cart. Same principle as Xiaohongshu—both powered by the browser Skill, just targeting a different website. After a few tries, it actually worked.&lt;/p>
+&lt;p>From memo to price comparison, to Xiaohongshu search, to adding items to Taobao cart—capabilities got stitched together one by one. First it could record, then it could search, then it could verify, and finally it could take action.&lt;/p>
+&lt;hr>
+&lt;h2 id="in-practice-buying-picture-books">In Practice: Buying Picture Books&lt;/h2>
+&lt;p>Buying picture books was the most complete run-through of the whole process.&lt;/p>
+&lt;p>I didn&amp;rsquo;t jump straight to having it search Taobao. Instead, I did a round of deep research with Gemini first—telling it the kid&amp;rsquo;s age and interests, asking it to do a thorough investigation and recommend suitable picture books. After getting those recommendations, I passed the results to the shopping assistant and asked it to check editions, prices, and parent reviews.&lt;/p>
+&lt;p>The most critical part was the Xiaohongshu verification: sorted by comments, checking which recommendations were genuine and which looked like ads, and whether parents were complaining in the comment sections. In the end, it organized the recommendations into batches—what to buy first, what to buy second—and I just had it add everything to the Taobao cart. I opened my phone, glanced at the cart, thought the prices were fine, and paid.&lt;/p>
+&lt;p>Individually, none of these steps are magical. But connected end to end, I didn&amp;rsquo;t have to bounce between several apps anymore.&lt;/p>
+&lt;hr>
+&lt;h2 id="a-few-other-shopping-trips">A Few Other Shopping Trips&lt;/h2>
+&lt;p>For the microscope, the Agent helped me search and recommend options, but I ended up buying a different model—its recommendations gave me a reference direction, but the final decision was still based on my own judgment.&lt;/p>
+&lt;p>The roller skates were bought earlier than the picture books, back when adding to cart wasn&amp;rsquo;t possible yet. The Agent helped search Xiaohongshu for brand recommendations, and then I went to Taobao myself to buy.&lt;/p>
+&lt;p>These three purchases happened to land in three different stages: roller skates could only search Xiaohongshu, the microscope could search and recommend, and the picture books went through the full pipeline from research to checkout. Each evolution came about naturally through actual use.&lt;/p>
+&lt;hr>
+&lt;p>It started as just a shopping list. Then it learned to search, to filter, to verify, to add to cart. Originally I just wanted to be a little lazy—and the lazier I got, the more it turned out it could actually save me from switching between apps. When I have time, I&amp;rsquo;ll write a separate piece on how to build one from scratch.&lt;/p></description></item><item><title>我的购物助手是怎么一步步长出来的</title><link>http://mayf3.github.io/post/2026-05-04-my-shopping-assistant/</link><pubDate>Mon, 04 May 2026 00:00:00 +0000</pubDate><guid>http://mayf3.github.io/post/2026-05-04-my-shopping-assistant/</guid><description>&lt;p>开始用 OpenClaw 之后，我一直在折腾各种玩法，除了有时候工作比较忙或太累就顾不上。最近想时不时分享一些自己折腾的经验。&lt;/p>
+&lt;p>这次折腾的内容是：一个购物助手，从最初的购物清单，慢慢长成了能搜小红书、比价、加购物车的像样的工具。&lt;/p>
+&lt;h2 id="该买的东西越来越多">该买的东西越来越多&lt;/h2>
+&lt;p>最近家里需要买的东西不少——小孩的绘本、显微镜、轮滑鞋，还有各种日用品。每次买东西都要在淘宝、京东、小红书之间来回切，比价格、看评价、挑款式，挺烦的。&lt;/p>
+&lt;p>我之前建了一个叫&amp;quot;购物清单管家&amp;quot;的 Agent，专门帮我记录想买的东西。想到什么就往里面说一句，它会帮我分类整理，算是个购物备忘录。&lt;/p>
+&lt;p>但备忘录只是个起点。当你有了一个基础功能之后，你会忍不住想——能不能帮我查查价格？能不能帮我去小红书看看评价？能不能直接帮我加购物车？&lt;/p>
+&lt;h2 id="第一次进化从备忘录到自动比价">第一次进化：从备忘录到自动比价&lt;/h2>
+&lt;p>这个购物备忘录用了一段时间之后，我开始觉得光是记录不够。我知道要买什么，但还是得自己去查价格。&lt;/p>
+&lt;p>后来有一天，我的技能研究员（一个每天自动帮我搜新 Skill 的 Agent）给我找了一个比价用的 Skill（大概叫&amp;quot;maishou&amp;quot;之类的名字）。装好之后它能去淘宝、京东、拼多多这些平台搜价格，告诉我大概有哪些选择、价格在哪个区间。&lt;/p>
+&lt;p>有了比价之后，购物助手就从&amp;quot;只记不查&amp;quot;变成了&amp;quot;能记能查&amp;quot;。&lt;/p>
+&lt;h2 id="第二次进化把小红书接进来">第二次进化：把小红书接进来&lt;/h2>
+&lt;p>比价有了，但我平时看测评和推荐主要还是靠小红书。光知道价格范围不够，我还想知道&amp;quot;哪个牌子好&amp;quot;&amp;ldquo;别人踩过什么坑&amp;rdquo;。&lt;/p>
+&lt;p>小红书没有现成的 Skill，但我之前已经在用 OpenClaw 的浏览器 Skill——通过 Brave Browser 的 CDP 协议（就是把浏览器的调试端口打开），让 Agent 像人一样打开浏览器、操作网页。我就让 Agent 用这个能力去小红书搜索，看用户怎么说。&lt;/p>
+&lt;p>后来我用 Skill Creator 慢慢打磨了一个小红书搜索的 Skill，专门处理搜索和内容提取。不是一次写好的，是反复调试、踩坑、改了好几版才稳定下来。&lt;/p>
+&lt;p>最开始我还真被它骗过一次。它说&amp;quot;我帮你查了一下&amp;quot;，推荐得头头是道，我一看还挺像那么回事。结果让它重新打开小红书搜帖子，才发现前面那套基本是自己编的。&lt;/p>
+&lt;p>后来我发现搜索排序也有问题。小红书默认按点赞排序，但点赞多的不一定有用——很多是水文、广告。真正有价值的信息往往在评论里。后来我要求它按评论数排序，评论多的帖子，真人分享的概率更高。&lt;/p>
+&lt;p>再后来，为了防止它张嘴就来，我加了一条规则：给出推荐的时候必须附上证据——哪个帖子说的、帖子链接是什么。其实从第一次让它搜小红书开始，我就要求它附带数据来源，只是后来这个规则越来越严格，从简单的截图到完整的帖子链接和引用。&lt;/p>
+&lt;h2 id="第三次进化从查到买加购物车也交给它">第三次进化：从查到买，加购物车也交给它&lt;/h2>
+&lt;p>有一次买绘本的时候，我真的懒得打开淘宝一个个搜、一个个加购物车。就想，能不能让 Agent 帮我干这步？&lt;/p>
+&lt;p>一开始 Agent 还拒绝了我，说不安全、不推荐直接操作购物网站。我说加购物车就行，支付我来做。于是我又用浏览器的 Skill 做了个淘宝购物车的 Skill，让 Agent 打开淘宝网页搜索商品，在搜索结果里对比价格和参数，把合适的加到购物车里。原理跟小红书一样，都是浏览器 Skill 干的，只是换了目标网站。试了几次发现还真行。&lt;/p>
+&lt;p>从备忘录到比价，到小红书搜索，到淘宝加购物车——能力就是这样一点点接上的，先能记，再能查，然后能验证，最后能动手操作。&lt;/p>
+&lt;h2 id="实战买绘本">实战：买绘本&lt;/h2>
+&lt;p>买绘本是流程最完整的一次。&lt;/p>
+&lt;p>我没有一上来就让它搜淘宝，而是自己先用 Gemini 做了一轮深度研究——把孩子的年龄、兴趣都告诉 Gemini，让它认真做一遍资料调研，推荐适合的绘本。拿到推荐后，又把结果丢给购物助手，让它去查版本、价格和家长评价。&lt;/p>
+&lt;p>最关键的是小红书验证：按评论排序，看哪些是真推荐、哪些像广告、评论区有没有家长吐槽。最后它把推荐分了批次，第一批买什么、第二批买什么，我直接让它去淘宝加购物车。打开手机看了一眼购物车，觉得价格 OK，就付款了。&lt;/p>
+&lt;p>单看每一步其实都不神奇，但连起来之后，就不用在好几个 App 之间来回跳了。&lt;/p>
+&lt;h2 id="其他几次购物">其他几次购物&lt;/h2>
+&lt;p>显微镜是 Agent 帮我检索推荐了一下，但最后我买的是另一款——它的推荐给了我参考方向，最终决策还是根据自己的判断。&lt;/p>
+&lt;p>轮滑鞋买得比绘本早，那时候还没有加购物车的能力。Agent 帮我在小红书上搜了搜品牌推荐，然后我还是自己去淘宝买的。&lt;/p>
+&lt;p>这三次购物刚好卡在三个阶段：轮滑鞋只能搜小红书，显微镜能搜能推荐，绘本从研究到下单全链路。每一步进化都是用着用着自然出来的。&lt;/p>
+&lt;hr>
+&lt;p>一开始只是记个购物清单，后来它会查、会筛、会验证、会加购物车。本来只是想偷点懒，结果越偷越多，最后发现它还真能帮我少切几个 App。后面有空我再单独写一篇怎么从零搭的。&lt;/p></description></item><item><title>教 Agent 用 Gemini 生成自己的头像</title><link>http://mayf3.github.io/post/2026-04-26-teach-agent-gemini-avatar/</link><pubDate>Sun, 26 Apr 2026 22:42:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-04-26-teach-agent-gemini-avatar/</guid><description>&lt;p>我从 OpenClaw 出来就一直在折腾各种玩法，除了有时候工作比较忙或太累就顾不上折腾。最近想时不时分享一些自己折腾的经验。&lt;/p>
+&lt;p>这次折腾的内容是：让图像生成专家 agent 打开浏览器，连 Gemini 生成图片，然后由另一个 agent（HR）调飞书 API 把图片设成群头像。两个 agent 各管各的，一个负责画，一个负责换。整个过程 agent 自己完成，我只需要看结果。听起来很简单，实际上我花了好几天才折腾出来。&lt;/p>
+&lt;h2 id="为什么要搞这个">为什么要搞这个&lt;/h2>
+&lt;p>因为我有一堆飞书群，每个群是一个 agent，有图像生成专家、3D 打印专家、HR 管家，还有写博客的小博。这些群都没有头像，长得一模一样，找起来费劲，而且也太丑了。想给它们换个头像，但群太多不想一个个换，就让龙虾自己给自己换头像。我自己有 Gemini 会员，就直接用它的图片生成功能来生成头像。&lt;/p>
+&lt;h2 id="浏览器就是第一道坎">浏览器就是第一道坎&lt;/h2>
+&lt;p>要让图像生成专家 agent 用 Gemini 生图，得先让它能操作浏览器。我之前一直用 Chrome，但 agent 打开的 Chrome 跟我自己日常用的是同一个，经常搞混。有时候 agent 还没干完活，我手贱把窗口关了；有时候我自己在查东西，agent 把我的标签页关了，我和 agent 在互相伤害。&lt;/p>
+&lt;p>后来我去搜了一下社区里大家是怎么做的，有些人提到了 Brave 浏览器。和 Chrome 一样内核的开源浏览器，功能上和 Chrome 差距不大。我就计划让 agent 只用这个浏览器，而我用 Chrome，这样就不会误开误关了。但光换个浏览器不够，还得配置一些端口信息让 agent 能连上去操作。这个配置过程折腾了好几次，中间它还会自己关浏览器、用错配置文件，沟通了好几轮才完全搞定。&lt;/p>
+&lt;p>就像教一个实习生用公司电脑。不是告诉他&amp;quot;这是电脑&amp;quot;就完了，还得教他别随手关机、别拔网线、别把工作窗口关了。&lt;/p>
+&lt;h2 id="agent-操作浏览器才是大坑">Agent 操作浏览器才是大坑&lt;/h2>
+&lt;p>浏览器搞定了，开始让图像生成专家 agent 通过浏览器去 Gemini 生图。第一轮就翻车了，它连生成图片的按钮都找不到。&lt;/p>
+&lt;p>好不容易搞定了按钮的问题，又开始下载错图片。Gemini 的页面会保留上一次生成的结果，agent 下载的时候分不清哪个是新的哪个是旧的，很自信地把旧图拿来交差。&lt;/p>
+&lt;p>折腾了两三轮之后终于能拿到正确的图片了。整个流程就是每次它找错了，我就告诉它哪里错了，找对了之后就把正确的做法更新到 skill 里，这样下次就不会再犯。&lt;/p>
+&lt;p>像教小孩，你得一遍遍说，直到他记住。&lt;/p>
+&lt;h2 id="实际跑起来">实际跑起来&lt;/h2>
+&lt;p>第一次成功后，我让 HR 用定时任务每天晚上 11 点开始，每个小时换一个群的头像（因为 GLM 套餐有 5 小时限额，经常让 agent 半夜跑任务，不影响白天干活）。但现实没那么美好，HR 时不时就会&amp;quot;发癫&amp;quot;，不是改头像而是往群里发一条消息。我第二天才发现，让它更正，同时更新它的 skill，把这种错误模式记下来。&lt;/p>
+&lt;p>实际的流程比想象的复杂：HR 先扫描发现谁还没换头像，然后把任务发给图像生成专家。但 HR 不会等生成专家画完，而是等到第二次轮询的时候再去图像生成专家那里拿上一轮的头像来更新。&lt;/p>
+&lt;p>经过反复更正后，这个流程的成功率肉眼可见地慢慢上升，但还是不及预期。基本上没有一次就能搞定的，都要不断调教。&lt;/p>
+&lt;h2 id="最后">最后&lt;/h2>
+&lt;p>Agent 不是一次写出来的，是一点点教出来的。&lt;/p>
+&lt;p>这个事本身看着不大，就是换几个头像嘛。至少现在这些群看起来不那么丑了。但看着一只啥也不会的龙虾慢慢变聪明，一开始啥也不会让你气得想骂人，慢慢看到它学会了又有点成就感。有耐心的话挺有意思的，没耐心的话就别折腾了。&lt;/p></description></item><item><title>简介感知机算法</title><link>http://mayf3.github.io/post/perceptron/</link><pubDate>Sat, 02 Jan 2021 19:46:00 +0800</pubDate><guid>http://mayf3.github.io/post/perceptron/</guid><description>&lt;p>先放一张感知机的思维导图，下面的内容都是围绕着这张图介绍的。
+&lt;img src="http://mayf3.github.io/perceptron/B140FD45-6D28-491D-A781-3446CF0E351C.png" alt="8f7e79ba13c997cc8fd9eb2de6ecce6c">&lt;/p>
+&lt;h2 id="什么是感知机模型">什么是感知机模型&lt;/h2>
+&lt;p>感知机是Rosenblatt在1958年的&lt;a href="http://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf">论文&lt;/a>里提出的模型，该模型是支持向量机和神经网络的基础。&lt;/p>
+&lt;p>该模型主要的思想很简单，就是要找出一条直线（N维情况下就是N-1维超平面）把正样本和负样本完全分开，如下图：
+&lt;img src="http://mayf3.github.io/perceptron/451850DE-7A91-4D36-9782-FFD19AB4BB8C.png" alt="592a6df086d6369342f3d7d8a5be1172">&lt;/p>
+&lt;h2 id="模型">模型&lt;/h2>
+&lt;p>感知机模型的形式如下，其中w和b为参数:
 $$
 f(x) = sign(w \cdot x + b)
 $$
-sign函数定义如下，在感知机中的正样本类别为+1，负样本类别为-1：&lt;/p&gt;
-&lt;p&gt;$$
-sign(x) = \begin{cases}  +1, &amp;amp; \text{} x &amp;gt;= 0  \\\ -1, &amp;amp; \text{} x &amp;lt; 0 \end{cases}
-$$&lt;/p&gt;
-&lt;p&gt;比较形象的理解，就是找出一条直线能完全区分开正负样本，比如二维情况下就是w1 * x1 + w2 * x2 + b = 0的直线，高维情况下就是用一个超平面来区分正负样本。&lt;/p&gt;
-&lt;p&gt;感知机模型的特征如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;该模型只能应用于&lt;strong&gt;二分类问题&lt;/strong&gt;，毕竟只用一根直线来划分输入空间。&lt;/li&gt;
-&lt;li&gt;该模型属于&lt;strong&gt;线性模型&lt;/strong&gt;，只能处理线性可分的数据，其假设空间是所有线性函数w·x+b。&lt;/li&gt;
-&lt;li&gt;该模型属于&lt;strong&gt;判别模型&lt;/strong&gt;，直接得到决策函数（即上面的f(x)）。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;学习策略&#34;&gt;学习策略&lt;/h2&gt;
-&lt;p&gt;我们希望得到一条区分正负样本的直线，一个显而易见的目标，就是最小化误分类点的数量，但这个目标使用了0-1损失函数，但该函数不可导，不方便优化，所以我们选择最小化误分类的点到直线的距离，即：
+sign函数定义如下，在感知机中的正样本类别为+1，负样本类别为-1：&lt;/p>
+&lt;p>$$
+sign(x) = \begin{cases} +1, &amp;amp; \text{} x &amp;gt;= 0 \\\ -1, &amp;amp; \text{} x &amp;lt; 0 \end{cases}
+$$&lt;/p>
+&lt;p>比较形象的理解，就是找出一条直线能完全区分开正负样本，比如二维情况下就是w1 * x1 + w2 * x2 + b = 0的直线，高维情况下就是用一个超平面来区分正负样本。&lt;/p>
+&lt;p>感知机模型的特征如下：&lt;/p>
+&lt;ol>
+&lt;li>该模型只能应用于&lt;strong>二分类问题&lt;/strong>，毕竟只用一根直线来划分输入空间。&lt;/li>
+&lt;li>该模型属于&lt;strong>线性模型&lt;/strong>，只能处理线性可分的数据，其假设空间是所有线性函数w·x+b。&lt;/li>
+&lt;li>该模型属于&lt;strong>判别模型&lt;/strong>，直接得到决策函数（即上面的f(x)）。&lt;/li>
+&lt;/ol>
+&lt;h2 id="学习策略">学习策略&lt;/h2>
+&lt;p>我们希望得到一条区分正负样本的直线，一个显而易见的目标，就是最小化误分类点的数量，但这个目标使用了0-1损失函数，但该函数不可导，不方便优化，所以我们选择最小化误分类的点到直线的距离，即：
 $$
 \frac{1}{\lVert w \rVert}\lvert w \cdot x + b\rvert
 $$
@@ -53,21 +727,21 @@ $$
 $$
 L(w, b) = - \sum_{x \in M}{y_i * (w \cdot x_i + b)}
 $$
-这样就得到感知机的学习策略，在假设空间中选取参数w, b使得损失函数最小。&lt;/p&gt;
-&lt;h2 id=&#34;学习算法&#34;&gt;学习算法&lt;/h2&gt;
-&lt;p&gt;感知机模型采用的学习算法是梯度下降法，不过我们不需要一次性优化整个集合M的梯度，而是可以随机选取集合M的一个点(xi, yi)，进行梯度下降：
+这样就得到感知机的学习策略，在假设空间中选取参数w, b使得损失函数最小。&lt;/p>
+&lt;h2 id="学习算法">学习算法&lt;/h2>
+&lt;p>感知机模型采用的学习算法是梯度下降法，不过我们不需要一次性优化整个集合M的梯度，而是可以随机选取集合M的一个点(xi, yi)，进行梯度下降：
 $$
 w \leftarrow w + \eta * y_i * x_i
 $$
 $$
 b \leftarrow b + \eta * y_i
 $$
-其中η是学习率，其取值范围为区间(0,1]。&lt;br&gt;
-通过不断迭代上述的过程，最终可以得到完全区分正负样本的超平面。&lt;/p&gt;
-&lt;h2 id=&#34;算法收敛性&#34;&gt;算法收敛性&lt;/h2&gt;
-&lt;p&gt;略（详见李航《统计学习方法》，过段时间再证明）&lt;/p&gt;
-&lt;h2 id=&#34;算法的对偶形式&#34;&gt;算法的对偶形式&lt;/h2&gt;
-&lt;p&gt;可以通过拉格朗日法，将感知机问题转变为其对偶形式：
+其中η是学习率，其取值范围为区间(0,1]。&lt;br>
+通过不断迭代上述的过程，最终可以得到完全区分正负样本的超平面。&lt;/p>
+&lt;h2 id="算法收敛性">算法收敛性&lt;/h2>
+&lt;p>略（详见李航《统计学习方法》，过段时间再证明）&lt;/p>
+&lt;h2 id="算法的对偶形式">算法的对偶形式&lt;/h2>
+&lt;p>可以通过拉格朗日法，将感知机问题转变为其对偶形式：
 $$
 f(x) = sign(\sum_{j=1}^M a_j * y_j * x_j * x + b)
 $$
@@ -78,171 +752,55 @@ $$
 $$
 b \leftarrow b + \eta * y_i
 $$
-该算法一样收敛，其迭代过程和原始形式可以一一对应。&lt;/p&gt;
-&lt;h2 id=&#34;感知机的尝试&#34;&gt;感知机的尝试&lt;/h2&gt;
-&lt;p&gt;我在&lt;a href=&#34;https://github.com/mayf3/machine_learning/tree/master/algorithm/perceptron&#34;&gt;gihtub仓库&lt;/a&gt;里实现了如下内容：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;perceptron.cc，原始感知机算法，每次迭代选择第一个误分类的点进行梯度下降。&lt;/li&gt;
-&lt;li&gt;perceptron_all.cc，原始感知机算法，但是迭代的时候，使用所有误分类的点进行梯度下降。&lt;/li&gt;
-&lt;li&gt;perceptron_dual.cc，感知机对偶形式的算法，类似原始感知机算法，但由于要计算内积矩阵，效率会比较低。&lt;/li&gt;
-&lt;li&gt;utils.cc，包含一些通用工具函数和一个数据生成函数。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;由于感知机算法要求数据是完全线性可分的，网上的数据集都不满足要求，所以我在utils里面实现了一个数据生成函数，其思路是在随机生成的数据里，选取两个点，以这两个点的中垂超平面来将点划分为正负样本，具体过程如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;随机生成size个dim维度的点集p。&lt;/li&gt;
-&lt;li&gt;计算点p[0]和p[1]的中点center和方向向量diff。&lt;/li&gt;
-&lt;li&gt;对于点集p的任意点x，计算(x - center)和diff的內积，大于等于0则标记其为正样本，否则标记其为负样本。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;提问&#34;&gt;提问&lt;/h2&gt;
-&lt;p&gt;下面是我在学习感知机的过程中，能想到的一些有助于检验学习结果的问题，有一些答案还需要进一步完善。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：感知机是判别模型还是生成模型？&lt;/strong&gt;&lt;br&gt;
-答：判别模型&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：感知机是二分类模型、多分类模型还是回归模型？&lt;/strong&gt;&lt;br&gt;
-答：二分类&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：感知机模型的假设空间是由哪些函数构成的？&lt;/strong&gt;&lt;br&gt;
-答：所有线性函数w*x+b&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：感知机的损失函数是经验风险函数还是结构风险函数？&lt;/strong&gt;&lt;br&gt;
-答：经验风险函数&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：为什么不能使用误分类的点数作为损失函数？&lt;/strong&gt;&lt;br&gt;
-答：因为误分类点的个数，其实就是0-1损失函数的和，该函数不可导，不方便求解。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：从感知机模型的原始形式推导出对偶形式？&lt;/strong&gt;&lt;br&gt;
-答：见#算法的对偶形式&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：感知机的学习率可以小于0或则大于1吗？&lt;/strong&gt;&lt;br&gt;
-答：学习率不可以小于等于0，但可以大于1，具体证明略&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：证明感知机算法的收敛性。&lt;/strong&gt;&lt;br&gt;
-答：见#算法收敛性&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：证明感知机对偶算法的收敛性。&lt;/strong&gt;&lt;br&gt;
-答：证明略&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：证明线性可分的充分必要条件是正样本组成的凸壳和负样本组成的凸壳互不相交。&lt;/strong&gt;&lt;br&gt;
-答：&lt;br&gt;
-先证充分性：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;线性可分，则正负样本被直线L完全分开，则其对应的凸壳也完全被该直线L分开，互不相交。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;再证必要性：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;若凸壳互不相交，则可在正样本的凸壳和负样本的凸壳上，找出最近点对正样本凸壳上的点X和负样本凸壳上的点Y，构建直线L为X和Y的垂直平分线，直线L可以区分正负样本，证明略。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;问：为什么不是一次性使所有错误分类的梯度下降，而是每次随机选择一个错误分类？&lt;/strong&gt;&lt;br&gt;
-答：实际测试上，对所有错误分类进行梯度下降和每次随机选择一个错误分类进行梯度下降，在迭代次数上没有显著差异。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;问：为什么不需要感知机的损失函数，不需要考虑前面的系数，即不需要乘上w的范数的倒数？&lt;/strong&gt;&lt;br&gt;
-答：等整理了支持向量机再回来回答曾问题。w其实不影响结果，毕竟线性函数w*x+b=0里面，等式两边除以w的范数，也还是表示同一条直线。&lt;br&gt;
-推测可能的原因是，加上w的范数后，计算梯度会麻烦一点。&lt;/p&gt;
-&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
-&lt;p&gt;李航《统计学习方法》第二章&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>简介knn算法</title>
-      <link>http://mayf3.github.io/post/knn/</link>
-      <pubDate>Fri, 25 Dec 2020 09:28:00 +0800</pubDate>
-      
-      <guid>http://mayf3.github.io/post/knn/</guid>
-      
-        <description>&lt;h2 id=&#34;什么是knn&#34;&gt;什么是knn&lt;/h2&gt;
-&lt;p&gt;knn是Cover和Hart在1968年的&lt;a href=&#34;https://pdfs.semanticscholar.org/a3c7/50febe8e72a1e377fbae1a723768b233e9e9.pdf?_ga=2.260660749.1635069309.1608960216-652721388.1605965658&#34;&gt;论文&lt;/a&gt;里提出的分类算法，全名叫K Nearest Neighbor，中文翻译是k近邻算法。&lt;br&gt;
-knn的思想很简单，核心假设是同类别的样本在特征空间上的距离较近，但由于数据存在噪声，只找最近的样本会有问题，所以我们综合考虑最近的k个样本。&lt;br&gt;
-基于这个思想，knn对每一个样本，会在训练集中找出与该样本距离最接近的k个样本，取这k个样本中出现次数最多的类别作为该样本的分类结果。&lt;/p&gt;
-&lt;p&gt;用下面的例子来简单介绍一下knn，假设有10个训练数据，如下图，蓝三角形和绿圆形分别表示不同的类别：
-&lt;img src=&#34;http://mayf3.github.io/knn/DEBCF616-2EB5-42C7-9CA2-0B7C2F1BC9F5.png&#34; alt=&#34;c44f2e1029eaa562953dbbd709b5846b&#34;&gt;
-若我们想得到下图红点的类别，假定k为3，则我们在训练样本中找最近的3个样本，即红色圆圈内有的两个蓝三角形和一个绿圆形，于是我们将红点分类红色圆圈内出现次数最多的类别，即蓝三角。
-&lt;img src=&#34;http://mayf3.github.io/knn/B4D9B651-D5A7-4A37-87A6-0AF9614DED62.png&#34; alt=&#34;c9d5a145e64e0655c315dff4cc5661a4&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;knn有哪些参数&#34;&gt;knn有哪些参数&lt;/h2&gt;
-&lt;p&gt;knn的模型主要由下面三个要素决定：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;k值的选择（例子中的k=3）&lt;/li&gt;
-&lt;li&gt;距离度量（例子中使用了欧式距离，所示的红色圆圈）&lt;/li&gt;
-&lt;li&gt;分类决策规则（例子中以多数类别作为分类结果）&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&#34;k值的选择&#34;&gt;k值的选择&lt;/h3&gt;
-&lt;p&gt;k值的选择需要结合具体的应用数据，通常会选用较小的一个值，然后通过交叉验证法来选取最优的k值。&lt;/p&gt;
-&lt;p&gt;可以从方差和偏差来考虑k值对模型的影响：&lt;strong&gt;随着k值的增大，模型的方差会逐渐变小，偏差逐渐变大。&lt;/strong&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;假定k值为1，算法就退化成最近邻，此时模型对数据非常敏感，一旦数据噪声较多，则模型的准确率会很低。&lt;br&gt;
-随着k值的增大，模型逐渐降低了数据噪声的干扰，但分类的结果会逐渐倾向于整体数据。&lt;br&gt;
-当k值为N时，则将永远返回数据中占比最多的分类，此时方差为0。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;这里有一篇&lt;a href=&#34;http://scott.fortmann-roe.com/docs/BiasVariance.html&#34;&gt;文章&lt;/a&gt;，以knn为例讲解了偏差和方差的区别，可以看看。&lt;/p&gt;
-&lt;h3 id=&#34;距离度量&#34;&gt;距离度量&lt;/h3&gt;
-&lt;p&gt;在数学上有对于距离度量的严谨定义，这里就不详细说了。&lt;br&gt;
-常见的距离度量，主要是曼哈顿距离、欧式距离（knn最常用的距离）和切比雪夫距离。&lt;br&gt;
-对于维度为N的x和y向量，各个距离的公式如下:&lt;/p&gt;
-&lt;p&gt;曼哈顿距离
-$$
-L_1 = \sum_{i=1}^N|X_i - Y_i|
-$$&lt;/p&gt;
-&lt;p&gt;欧式距离
-$$
-L_2 = \Bigg(\sum_{i=1}^N{(X_i - Y_i)^{2}}\Biggr)^{\tfrac{1}{2}}
-$$&lt;/p&gt;
-&lt;p&gt;切比雪夫距离
-$$
-L_\infty = \max_i|X_i - Y_i|
-$$&lt;/p&gt;
-&lt;h3 id=&#34;分类决策规则&#34;&gt;分类决策规则&lt;/h3&gt;
-&lt;p&gt;knn的分类决策规则往往是多数表决，由距离最近的k个样本的多数类决定测试样本的类别。多数表决规则其实等价于经验风险最小化。&lt;br&gt;
-其实还有其他方案，比如将这k个样本按照距离进行平均或则加权平均（该规则也能在回归任务上）等等。&lt;/p&gt;
-&lt;h2 id=&#34;knn有哪些实现&#34;&gt;knn有哪些实现&lt;/h2&gt;
-&lt;p&gt;knn算法的难点是如何快速在训练集里找到距离前k小的样本，最简单的实现是线性扫描，对于测试样本，计算该样本到所有训练样本的距离，排序取前k个。&lt;/p&gt;
-&lt;p&gt;另外一种常见的实现方法是采用kd树，这里就不展开介绍了，可以参考这个&lt;a href=&#34;https://www.cnblogs.com/maxlpy/p/4297254.html&#34;&gt;文章&lt;/a&gt;。
-在数据随机且维度不大的情况下，kd树的复杂度会优于线性扫描，但如果维度接近于样本数量，则kd树约等于线性扫描。&lt;/p&gt;
-&lt;h2 id=&#34;knn的优缺点&#34;&gt;knn的优缺点&lt;/h2&gt;
-&lt;p&gt;k近邻算法的优点如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;实现简单&lt;/li&gt;
-&lt;li&gt;没有显式的训练过程&lt;/li&gt;
-&lt;li&gt;精度高（根据knn的论文，knn的泛化错误率不超过贝叶斯最优分类器的错误率的两倍）&lt;/li&gt;
-&lt;li&gt;具有可解释性&lt;/li&gt;
-&lt;li&gt;对异常值不敏感&lt;/li&gt;
-&lt;li&gt;无数据输入假定&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;k近邻算法的缺点如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;计算复杂度高&lt;/li&gt;
-&lt;li&gt;空间复杂度高&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;归一化&#34;&gt;归一化&lt;/h2&gt;
-&lt;p&gt;knn使用的是欧式距离，欧式距离对数据的尺度很敏感，比如下面的例子：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;假定身高的单位为米，体重的单位为克，很明显这两者在尺度上就有巨大的差异。&lt;br&gt;
-此时一个1.7m，60kg的样本和1.0m，60kg的样本的距离为0.7，而1.7m，60kg的样本和1.7m，59kg的样本的距离却高达1000。&lt;br&gt;
-若我们是在做大人或小孩的分类，则这样的距离计算会很影响knn的性能。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;在大多数情况下，我们都不希望由于特征的尺度不同，而导致其对距离的贡献不一，比如上面例子中，身高的特征即使差异很大，也几乎不影响距离的计算。
-为了解决这种问题，我们在使用knn的时候（或则其他和距离尺度相关的算法），我们常常会使用下面的归一化方法来处理数据。&lt;/p&gt;
-&lt;p&gt;min-max归一化，需要对每一个特征计算min和max。
-$$
-m = \frac{(x - x_{min})}{(x_{max} - x_{min})}
-$$&lt;/p&gt;
-&lt;p&gt;z-score归一化，需要对每一个特征计算均值和标准差。
-$$
-z = (x - \mu) / \sigma
-$$&lt;/p&gt;
-&lt;p&gt;当我在尝试knn算法的时候，也很好奇这两种归一化算法的优劣，然后就搜到了这篇&lt;a href=&#34;http://j.mecs-press.net/ijcnis/ijcnis-v9-n11/IJCNIS-V9-N11-4.pdf&#34;&gt;论文&lt;/a&gt;。&lt;br&gt;
-从论文里给出的对比效果来看，似乎min-max的要比z-score略好一点：
-&lt;img src=&#34;http://mayf3.github.io/knn/B4491EA5-817E-4F13-8994-50BE70C206D2.png&#34; alt=&#34;427ee4485988d610a448fa4f96101bfd&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;knn的尝试&#34;&gt;knn的尝试&lt;/h2&gt;
-&lt;p&gt;我在&lt;a href=&#34;https://github.com/mayf3/machine_learning/tree/master/algorithm/knn&#34;&gt;gihtub仓库&lt;/a&gt;里实现了knn的线性扫描版本和kd树版本，拿mnist和鸢尾花卉数据集来评估knn的性能。&lt;br&gt;
-结果发现knn的算法虽然简单，但效果确实还挺好，mnist的准确率有94%以上，鸢尾花卉的准确率也有93%(正确分类42个/总数45个)。&lt;br&gt;
-此外我也在鸢尾花卉数据集上尝试对特征进行归一化，用min-max归一化算法后准确率达到95%(43/45)，用z-score归一化后准确率达到98%(44/45)。&lt;/p&gt;
-&lt;p&gt;但knn有一个显著的问题，就是运行效率低，特别是在mnist数据集上，1w的测试数据，6w的训练数据，特征数量有28 * 28=784个。&lt;br&gt;
-如果用线性扫描法，则总的运算量达到1w * 6w * 784，假设计算机每秒运算量为10的8次方，也需要4707秒，超过一个小时。&lt;br&gt;
-尝试用kd树来优化knn，结果其性能反而比线性扫描还差。&lt;/p&gt;
-&lt;p&gt;如果想针对knn的效率问题进行优化，之后可以尝试一下非精确的knn算法，或则是对数据进行降维。&lt;/p&gt;
-&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
-&lt;p&gt;机器学习实战 第二章 k-近邻算法&lt;br&gt;
-机器学习 第十章 降维与度量学习&lt;br&gt;
-统计学习方法 第三章 k近邻法&lt;br&gt;
-特征工程入门与实践 第三章 特征增强：清洗数据 - 3.3 标准化和归一化&lt;br&gt;
-&lt;a href=&#34;https://pdfs.semanticscholar.org/a3c7/50febe8e72a1e377fbae1a723768b233e9e9.pdf?_ga=2.260660749.1635069309.1608960216-652721388.1605965658&#34;&gt;Nearest Neighbor Pattern Classification&lt;/a&gt;&lt;br&gt;
-&lt;a href=&#34;http://scott.fortmann-roe.com/docs/BiasVariance.html&#34;&gt;Understanding the Bias-Variance Tradeoff&lt;/a&gt;&lt;br&gt;
-&lt;a href=&#34;http://j.mecs-press.net/ijcnis/ijcnis-v9-n11/IJCNIS-V9-N11-4.pdf&#34;&gt;Comparative Analysis of KNN Algorithm using Various Normalization Techniques&lt;/a&gt;&lt;br&gt;
-&lt;a href=&#34;https://www.cnblogs.com/maxlpy/p/4297254.html&#34;&gt;k-d tree算法详解&lt;/a&gt;。&lt;/p&gt;
-</description>
-      
-    </item>
-    
-  </channel>
-</rss>
+该算法一样收敛，其迭代过程和原始形式可以一一对应。&lt;/p>
+&lt;h2 id="感知机的尝试">感知机的尝试&lt;/h2>
+&lt;p>我在&lt;a href="https://github.com/mayf3/machine_learning/tree/master/algorithm/perceptron">gihtub仓库&lt;/a>里实现了如下内容：&lt;/p>
+&lt;ol>
+&lt;li>perceptron.cc，原始感知机算法，每次迭代选择第一个误分类的点进行梯度下降。&lt;/li>
+&lt;li>perceptron_all.cc，原始感知机算法，但是迭代的时候，使用所有误分类的点进行梯度下降。&lt;/li>
+&lt;li>perceptron_dual.cc，感知机对偶形式的算法，类似原始感知机算法，但由于要计算内积矩阵，效率会比较低。&lt;/li>
+&lt;li>utils.cc，包含一些通用工具函数和一个数据生成函数。&lt;/li>
+&lt;/ol>
+&lt;p>由于感知机算法要求数据是完全线性可分的，网上的数据集都不满足要求，所以我在utils里面实现了一个数据生成函数，其思路是在随机生成的数据里，选取两个点，以这两个点的中垂超平面来将点划分为正负样本，具体过程如下：&lt;/p>
+&lt;ol>
+&lt;li>随机生成size个dim维度的点集p。&lt;/li>
+&lt;li>计算点p[0]和p[1]的中点center和方向向量diff。&lt;/li>
+&lt;li>对于点集p的任意点x，计算(x - center)和diff的內积，大于等于0则标记其为正样本，否则标记其为负样本。&lt;/li>
+&lt;/ol>
+&lt;h2 id="提问">提问&lt;/h2>
+&lt;p>下面是我在学习感知机的过程中，能想到的一些有助于检验学习结果的问题，有一些答案还需要进一步完善。&lt;/p>
+&lt;p>&lt;strong>问：感知机是判别模型还是生成模型？&lt;/strong>&lt;br>
+答：判别模型&lt;/p>
+&lt;p>&lt;strong>问：感知机是二分类模型、多分类模型还是回归模型？&lt;/strong>&lt;br>
+答：二分类&lt;/p>
+&lt;p>&lt;strong>问：感知机模型的假设空间是由哪些函数构成的？&lt;/strong>&lt;br>
+答：所有线性函数w*x+b&lt;/p>
+&lt;p>&lt;strong>问：感知机的损失函数是经验风险函数还是结构风险函数？&lt;/strong>&lt;br>
+答：经验风险函数&lt;/p>
+&lt;p>&lt;strong>问：为什么不能使用误分类的点数作为损失函数？&lt;/strong>&lt;br>
+答：因为误分类点的个数，其实就是0-1损失函数的和，该函数不可导，不方便求解。&lt;/p>
+&lt;p>&lt;strong>问：从感知机模型的原始形式推导出对偶形式？&lt;/strong>&lt;br>
+答：见#算法的对偶形式&lt;/p>
+&lt;p>&lt;strong>问：感知机的学习率可以小于0或则大于1吗？&lt;/strong>&lt;br>
+答：学习率不可以小于等于0，但可以大于1，具体证明略&lt;/p>
+&lt;p>&lt;strong>问：证明感知机算法的收敛性。&lt;/strong>&lt;br>
+答：见#算法收敛性&lt;/p>
+&lt;p>&lt;strong>问：证明感知机对偶算法的收敛性。&lt;/strong>&lt;br>
+答：证明略&lt;/p>
+&lt;p>&lt;strong>问：证明线性可分的充分必要条件是正样本组成的凸壳和负样本组成的凸壳互不相交。&lt;/strong>&lt;br>
+答：&lt;br>
+先证充分性：&lt;/p>
+&lt;ul>
+&lt;li>线性可分，则正负样本被直线L完全分开，则其对应的凸壳也完全被该直线L分开，互不相交。&lt;/li>
+&lt;/ul>
+&lt;p>再证必要性：&lt;/p>
+&lt;ul>
+&lt;li>若凸壳互不相交，则可在正样本的凸壳和负样本的凸壳上，找出最近点对正样本凸壳上的点X和负样本凸壳上的点Y，构建直线L为X和Y的垂直平分线，直线L可以区分正负样本，证明略。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>问：为什么不是一次性使所有错误分类的梯度下降，而是每次随机选择一个错误分类？&lt;/strong>&lt;br>
+答：实际测试上，对所有错误分类进行梯度下降和每次随机选择一个错误分类进行梯度下降，在迭代次数上没有显著差异。&lt;/p>
+&lt;p>&lt;strong>问：为什么不需要感知机的损失函数，不需要考虑前面的系数，即不需要乘上w的范数的倒数？&lt;/strong>&lt;br>
+答：等整理了支持向量机再回来回答曾问题。w其实不影响结果，毕竟线性函数w*x+b=0里面，等式两边除以w的范数，也还是表示同一条直线。&lt;br>
+推测可能的原因是，加上w的范数后，计算梯度会麻烦一点。&lt;/p>
+&lt;h2 id="参考资料">参考资料&lt;/h2>
+&lt;p>李航《统计学习方法》第二章&lt;/p></description></item></channel></rss>
