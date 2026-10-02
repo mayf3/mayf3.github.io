@@ -1,4 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 15 Aug 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Agent 一直用我的身份干活，直到我花两天做了权限隔离</title><link>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</link><pubDate>Sat, 15 Aug 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</guid><description>&lt;h1 id="agent-一直用我的身份干活直到我花两天做了权限隔离">Agent 一直用我的身份干活，直到我花两天做了权限隔离&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 22 Sep 2026 19:19:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>珍惜时间、目标型 Agent 执行与工作流分解</title><link>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</link><pubDate>Tue, 22 Sep 2026 19:19:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</guid><description>&lt;p>最近越来越强烈地感觉到，人生的时间并不多。真正重要的事情，是用时间创作出一些东西，而不是把自己消耗在反复盯守、不断确认和看似忙碌的交互里。&lt;/p>
+&lt;h2 id="从盯着-agent到配置一个能自己完成任务的环境">从盯着 Agent，到配置一个能自己完成任务的环境&lt;/h2>
+&lt;p>过去遇到自动化任务时，我常常担心它在某一步出错，于是给每个阶段加限制，自己守在电脑前不断输入管理员密码、确认下一步。结果任务没有真正持续执行，人的时间反而被切成了许多等待和干预的片段。&lt;/p>
+&lt;p>更合理的方式，是把部署、权限和工具配置成一个明确的环境，让一个服务只负责严格的部署动作，其他任务交给不同的 Agent 去完成。先设定目标，再设计一条能够持续运行的过程，让系统在我不在电脑前时也能继续工作，直到完成。&lt;/p>
+&lt;p>这不是放弃控制，而是把控制从“每一步都亲自盯着”转移到“提前设计好目标、边界和环境”。前者不断消耗人的注意力，后者则把时间投入到更高价值的规划和创作中。&lt;/p>
+&lt;h2 id="复杂任务为什么需要工作流">复杂任务为什么需要工作流&lt;/h2>
+&lt;p>和同事讨论 Agent 的自我进化时，我重新思考了工作流的意义。一个大的现实任务，往往不能直接交给模型从头做到尾。它需要被拆解成一组更小的节点任务，每个节点都有清晰的输入、输出和状态转移。&lt;/p>
+&lt;p>一个节点任务的完成，取决于几个部分：模型本身的智能、提示词、当前上下文，以及模型能够检索到的记忆、资料和工具。记忆和资料库并不是抽象的背景，它们构成了 Agent 的索引材料；工具和权限则构成它实际可用的环境。&lt;/p>
+&lt;p>当一个大任务被拆成足够小的节点，每个节点就可以在有限上下文中完成一件相对明确的事情。节点之间再通过工作流衔接起来，并用门禁检查各阶段的通信和输出，从而降低幻觉和信息丢失的风险。&lt;/p>
+&lt;h2 id="能力提升不只是换更强的模型">能力提升不只是换更强的模型&lt;/h2>
+&lt;p>Agent 能力的提升，当然包括模型智能本身的提升，但不止于此。还需要同时优化提示词、可检索的材料、工具环境、流程模式和任务粒度。&lt;/p>
+&lt;p>我倾向于把上下文区分成两类：静态上下文是这一次节点任务直接需要的内容，动态上下文则是这个节点背后所处的完整工作背景。只有把两者结合起来，节点才不会只看见眼前的一小段指令，却不知道自己在整个工作流中承担什么作用。&lt;/p>
+&lt;p>这也解释了为什么任务分解如此重要。不是所有环节都需要模型从头推理到底；有些环节可以被脚本压缩处理，有些环节需要模型运用判断力。把适合脚本的部分固定下来，把需要智能的部分交给模型，再为每个节点提供足够而不过量的上下文，系统才更有可能稳定运行。&lt;/p>
+&lt;h2 id="把时间用在目标型工作上">把时间用在目标型工作上&lt;/h2>
+&lt;p>目标型执行的核心，不是让 Agent 看起来一直很忙，而是让它在明确目标下持续向完成状态前进。人的工作也一样：与其不断处理即时的小问题，不如把时间投入到目标、环境和流程的设计上。&lt;/p>
+&lt;p>只要任务被拆解得足够细，输入和输出足够清晰，配合合适的门禁和环境，许多原本难以一次完成的工作，就可以被压缩成一组可以持续推进的节点。&lt;/p>
+&lt;p>人生有限，应该少一点盯守，多一点创作；少一点假装忙碌的交互，多一点目标、环境与流程的建设。最终要解决的问题是：怎样让系统在我不在电脑前时，也能持续干活，干到完成。&lt;/p></description></item><item><title>Agent 一直用我的身份干活，直到我花两天做了权限隔离</title><link>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</link><pubDate>Sat, 15 Aug 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</guid><description>&lt;h1 id="agent-一直用我的身份干活直到我花两天做了权限隔离">Agent 一直用我的身份干活，直到我花两天做了权限隔离&lt;/h1>
 &lt;p>我的 Agent 一直在用我的身份干活。不是比喻，是字面意思。&lt;/p>
 &lt;p>前段时间我把工作流和论坛都搭好了，正觉得一切上了正轨，结果发现地基是松的：Agent A 拿着 Agent B 的权限在跑，消息互相泄露，工作流和论坛时不时卡一下。那几天我干得最多的一件事，就是对着日志猜&amp;quot;这条消息到底是谁发的&amp;quot;。多 Agent 系统里最头疼的不是功能，是&amp;quot;谁是谁&amp;quot;。&lt;/p>
 &lt;h2 id="先享受了几天便利">先享受了几天便利&lt;/h2>
@@ -868,29 +884,4 @@
 &lt;p>因为我想到的不是一个具体的场景，不是&amp;quot;我会不会被替代&amp;quot;。而是一种更模糊的东西——我突然意识到，自己过去 17 年练出来的手艺，可能不再是最稀缺的东西了。不是说没用了，而是不够了。&lt;/p>
 &lt;p>所以我现在的做法变了。以前遇到问题，第一反应是打开编辑器。现在第一反应是把问题想清楚，然后交给 AI 去做。我花更多时间在&amp;quot;这件事该不该做&amp;quot;和&amp;quot;拆成几步给 AI&amp;quot;上，而不是&amp;quot;怎么实现&amp;quot;上。&lt;/p>
 &lt;p>说实话，这个转变还没完全适应。有时候 AI 写出来的代码我一眼就知道能更好，但我忍住了。不是偷懒，是发现如果我把时间花在&amp;quot;想清楚要什么&amp;quot;而不是&amp;quot;亲手写出来&amp;quot;上，结果反而更好。这个感觉，用了就回不去了。&lt;/p>
-&lt;p>写了这么多年代码之后，最真实的感受就一句话：不能再把写代码这件事当成自己的护城河了。得变。&lt;/p></description></item><item><title>Running, Voice, and Inspiration: A Thought Precipitation System</title><link>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration-en/</link><pubDate>Mon, 11 May 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-11-running-voice-inspiration-en/</guid><description>&lt;p>I&amp;rsquo;ve always felt that you need to set aside time to think.&lt;/p>
-&lt;p>No matter how smart AI gets, someone still has to tell it what&amp;rsquo;s worth thinking about. The truly good ideas still have to come from your own mind.&lt;/p>
-&lt;p>But when you&amp;rsquo;re sitting at your computer, information keeps flooding in. It&amp;rsquo;s rare to have truly quiet time. I&amp;rsquo;ve been looking for a way to let those scattered thoughts rise to the surface on their own.&lt;/p>
-&lt;p>Turns out, running does exactly that.&lt;/p>
-&lt;h2 id="your-brain-is-most-active-when-you-run">Your Brain Is Most Active When You Run&lt;/h2>
-&lt;p>It&amp;rsquo;s not that running has some magical power. It&amp;rsquo;s just that during work, information keeps pouring into your brain, and your subconscious is constantly organizing it. When you run, you can&amp;rsquo;t do deep work, but the things your subconscious has been organizing bubble up and become new ideas.&lt;/p>
-&lt;p>Back when I encountered big projects I couldn&amp;rsquo;t figure out, I would go for a run. As I ran, the logical connections between things would sort themselves out.&lt;/p>
-&lt;p>I&amp;rsquo;ve had this habit on and off for years. Lately I&amp;rsquo;ve picked it up again, because I have way too many ideas.&lt;/p>
-&lt;h2 id="voice-input-is-the-key">Voice Input Is the Key&lt;/h2>
-&lt;p>Before, when I ran and had an inspiration, I could only try to remember it mentally. By the time I finished, half of it was gone.&lt;/p>
-&lt;p>Then I found a surprisingly simple solution: turn on voice input in Feishu.&lt;/p>
-&lt;p>Here&amp;rsquo;s how it works. Use Doubao Input Method (yes, Doubao&amp;rsquo;s speech recognition is surprisingly accurate). In Feishu, tap the microphone icon and you can talk without holding the button. Just speak whatever comes to mind.&lt;/p>
-&lt;p>The voice is transcribed into text and sent to a Feishu group chat. My random-thoughts-recorder Agent waits there, automatically organizes the content, and saves it.&lt;/p>
-&lt;p>The bottleneck used to be the &amp;ldquo;hand&amp;rdquo; step. Your brain is fast, your mouth slows things down a bit, and typing with your hands slows them down even more. Now I skip the hands entirely — it goes straight from mouth to Agent. From the moment an idea pops up to when it&amp;rsquo;s recorded: a matter of seconds.&lt;/p>
-&lt;p>And the accuracy of speech-to-text is good enough. Doubao Input Method handles most corrections well, and on top of that, the Agent understands context. Even if you slur a few words, it can usually figure out what you meant.&lt;/p>
-&lt;h2 id="what-happens-to-the-inspiration">What Happens to the Inspiration&lt;/h2>
-&lt;p>These off-the-cuff ideas, collected by the random-thoughts-recorder, go down two paths.&lt;/p>
-&lt;p>One path leads to my blog-writing Agent. It scans the random thoughts for good ideas, turns them into article topics, and writes them out.&lt;/p>
-&lt;p>The other path leads to my &amp;ldquo;Lobster Partner&amp;rdquo; Agent (an Agent that helps me make product decisions). It organizes the information into suggestions like &amp;ldquo;here&amp;rsquo;s a direction you could explore next.&amp;rdquo; If I accept, it goes into my to-do list. If not, that&amp;rsquo;s fine too.&lt;/p>
-&lt;p>No inspiration goes to waste. Every day&amp;rsquo;s thoughts are captured.&lt;/p>
-&lt;h2 id="from-idea-to-execution-the-distance-is-nearly-zero">From Idea to Execution, the Distance Is Nearly Zero&lt;/h2>
-&lt;p>What strikes me most is how the gap between &amp;ldquo;having an idea&amp;rdquo; and &amp;ldquo;having that idea executed&amp;rdquo; has been compressed to nearly zero.&lt;/p>
-&lt;p>Before, if I had an idea, I had to do it myself. Want to write an article? Open the editor yourself. Want to build a tool? Write the code yourself. The more ideas you had, the more they piled up, until eventually you just stopped having them.&lt;/p>
-&lt;p>Not anymore. Just say the words, and the Agent gets to work. The cost is unbelievably low.&lt;/p>
-&lt;p>My current rhythm is: while running, I say whatever comes to mind, and it&amp;rsquo;s recorded by voice. My Agent organizes and categorizes it. The writing Agent picks topics from it and writes articles. The partner Agent distills tasks from it.&lt;/p>
-&lt;p>What I do is simple: spew out ideas while running, then review the results when I get back. Accept or reject — either way, I&amp;rsquo;ve given every idea a proper send-off.&lt;/p></description></item></channel></rss>
+&lt;p>写了这么多年代码之后，最真实的感受就一句话：不能再把写代码这件事当成自己的护城河了。得变。&lt;/p></description></item></channel></rss>
