@@ -14,7 +14,25 @@
 &lt;h2 id="把时间用在目标型工作上">把时间用在目标型工作上&lt;/h2>
 &lt;p>目标型执行的核心，不是让 Agent 看起来一直很忙，而是让它在明确目标下持续向完成状态前进。人的工作也一样：与其不断处理即时的小问题，不如把时间投入到目标、环境和流程的设计上。&lt;/p>
 &lt;p>只要任务被拆解得足够细，输入和输出足够清晰，配合合适的门禁和环境，许多原本难以一次完成的工作，就可以被压缩成一组可以持续推进的节点。&lt;/p>
-&lt;p>人生有限，应该少一点盯守，多一点创作；少一点假装忙碌的交互，多一点目标、环境与流程的建设。最终要解决的问题是：怎样让系统在我不在电脑前时，也能持续干活，干到完成。&lt;/p></description></item><item><title>Agent 一直用我的身份干活，直到我花两天做了权限隔离</title><link>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</link><pubDate>Sat, 15 Aug 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</guid><description>&lt;h1 id="agent-一直用我的身份干活直到我花两天做了权限隔离">Agent 一直用我的身份干活，直到我花两天做了权限隔离&lt;/h1>
+&lt;p>人生有限，应该少一点盯守，多一点创作；少一点假装忙碌的交互，多一点目标、环境与流程的建设。最终要解决的问题是：怎样让系统在我不在电脑前时，也能持续干活，干到完成。&lt;/p></description></item><item><title>机会成本、方向焦虑与把人生系统化</title><link>http://mayf3.github.io/post/2026-08-24-opportunity-cost-direction-anxiety-systematize-life/</link><pubDate>Mon, 24 Aug 2026 20:45:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-24-opportunity-cost-direction-anxiety-systematize-life/</guid><description>&lt;p>最近重新听曼昆经济学，几个基础原则突然和我正在经历的事情连了起来。&lt;/p>
+&lt;h2 id="别只看成本要看机会成本">别只看成本，要看机会成本&lt;/h2>
+&lt;p>一件事的成本，不只是它直接花掉的钱，而是你因此放弃的最有价值选项。买 token、买工具、把时间交给自动化，真正该问的不是“它贵不贵”，而是它节省的时间是否比我的单位时间更有价值。&lt;/p>
+&lt;p>如果一个工具能让我省下一个小时，而这一小时本来可以用来完成更重要的工作，那么它的价格就应该和这个被释放出来的机会一起衡量。很多决策之所以看起来昂贵，是因为我们只看见了支出，没有看见被放弃的收益。&lt;/p>
+&lt;h2 id="激励机制会改变行为">激励机制会改变行为&lt;/h2>
+&lt;p>人的行为会随着激励机制变化。想预判一个系统、一个团队，甚至一个人的下一步，不妨先问：他被什么奖励？什么行为能让他获得更多收益？&lt;/p>
+&lt;p>当激励机制改变，行为也会随之改变。理解这一点，比单纯评价一个人的选择更有用。因为很多行为并不是性格突然变化，而是环境在告诉他：这样做更划算。&lt;/p>
+&lt;h2 id="不要被沉没成本绑架">不要被沉没成本绑架&lt;/h2>
+&lt;p>决策应该看接下来还需要投入多少，以及这些新增投入能带来什么，而不是看过去已经投入了多少。过去花掉的钱、时间和精力已经无法收回，它们不应该继续决定未来。&lt;/p>
+&lt;p>这并不意味着过去的努力没有价值。过去的投入可以提供经验和资产，但不能成为继续投入的理由。真正的问题始终是：从现在开始，再投入一单位资源是否值得？&lt;/p>
+&lt;h2 id="在-agent-路上感到孤独">在 Agent 路上感到孤独&lt;/h2>
+&lt;p>最近我也会感到一种方向上的孤独。一直在做 Agent，持续迁移、搭建和修整自己的系统，看到别人沿着其他方向取得进展时，难免会怀疑：我是不是在一条错误的路上不断狂奔？&lt;/p>
+&lt;p>这种焦虑并不完全来自工作量，而是来自方向的不确定。更复杂的是，我既不愿意为了迎合别人而放弃自己认为有长期价值的事情，也承认自己有时只是做感兴趣的事，并没有真正对准目标。&lt;/p>
+&lt;p>所以问题可能不只是“要不要坚持”，而是目标是否清楚、战略是否有效、每天的行动是否真的指向目标。&lt;/p>
+&lt;h2 id="用系统化对抗迷茫">用系统化对抗迷茫&lt;/h2>
+&lt;p>也许更好的办法，是像重新做一个系统一样重新梳理自己：我的目标是什么？约束是什么？现在的行动对应哪个目标？哪些事情只是熟悉而不是重要？&lt;/p>
+&lt;p>《好战略，坏战略》提醒我，战略不是漂亮的口号，而是识别关键问题、集中力量、形成连贯行动。把人生系统化，不是把生活变成一张冷冰冰的表格，而是让有限的时间和注意力不再被模糊的焦虑随意消耗。&lt;/p>
+&lt;p>我仍然想继续做 building in public。播客、Agent 实验、迁移过程和踩坑记录，都是一种公开的长期积累。方向未必每次都正确，但只要持续记录、复盘和校正，就不会只能靠情绪判断自己是否在前进。&lt;/p>
+&lt;p>有时，系统化并不是为了让未来变得完全确定，而是为了在不确定中，仍然知道下一步该做什么。&lt;/p></description></item><item><title>Agent 一直用我的身份干活，直到我花两天做了权限隔离</title><link>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</link><pubDate>Sat, 15 Aug 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-08-15-agent-permission-isolation/</guid><description>&lt;h1 id="agent-一直用我的身份干活直到我花两天做了权限隔离">Agent 一直用我的身份干活，直到我花两天做了权限隔离&lt;/h1>
 &lt;p>我的 Agent 一直在用我的身份干活。不是比喻，是字面意思。&lt;/p>
 &lt;p>前段时间我把工作流和论坛都搭好了，正觉得一切上了正轨，结果发现地基是松的：Agent A 拿着 Agent B 的权限在跑，消息互相泄露，工作流和论坛时不时卡一下。那几天我干得最多的一件事，就是对着日志猜&amp;quot;这条消息到底是谁发的&amp;quot;。多 Agent 系统里最头疼的不是功能，是&amp;quot;谁是谁&amp;quot;。&lt;/p>
 &lt;h2 id="先享受了几天便利">先享受了几天便利&lt;/h2>
@@ -864,24 +882,4 @@
 &lt;p>Because what I thought about wasn&amp;rsquo;t one particular scenario, not &amp;ldquo;will I be replaced.&amp;rdquo; It was something more vague — I suddenly realized that the craft I&amp;rsquo;d spent 17 years honing might no longer be the scarcest thing around. Not useless, just not enough.&lt;/p>
 &lt;p>So my approach has changed. Before, when I ran into a problem, my first instinct was to open the editor. Now my first instinct is to think the problem through clearly, then hand it to AI. I spend more time on &amp;ldquo;should this even be done&amp;rdquo; and &amp;ldquo;how to break it into steps for AI&amp;rdquo; than on &amp;ldquo;how to implement it.&amp;rdquo;&lt;/p>
 &lt;p>Honestly, I haven&amp;rsquo;t fully adapted to this shift yet. Sometimes AI writes code and I can see at a glance how to make it better, but I hold back. Not out of laziness — I&amp;rsquo;ve found that when I spend my time on &amp;ldquo;being clear about what I want&amp;rdquo; rather than &amp;ldquo;writing it myself,&amp;rdquo; the results are actually better. Once you&amp;rsquo;ve experienced that, there&amp;rsquo;s no going back.&lt;/p>
-&lt;p>After writing code for all these years, the most honest thing I can say comes down to one thing: I can&amp;rsquo;t keep treating coding as my moat. Things have to change.&lt;/p></description></item><item><title>我写了 17 年代码，然后 AI 来了</title><link>http://mayf3.github.io/post/2026-05-17-%E6%88%91%E5%86%99%E4%BA%8617%E5%B9%B4%E4%BB%A3%E7%A0%81%E7%84%B6%E5%90%8Eai%E6%9D%A5%E4%BA%86/</link><pubDate>Sun, 17 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-17-%E6%88%91%E5%86%99%E4%BA%8617%E5%B9%B4%E4%BB%A3%E7%A0%81%E7%84%B6%E5%90%8Eai%E6%9D%A5%E4%BA%86/</guid><description>&lt;p>写了 17 年代码，最近我第一次很清楚地感觉到，自己以后可能不会再以写代码为核心竞争力了。&lt;/p>
-&lt;p>过去几年 AI 的变化太快了。刚开始我还把它当成一个更聪明的搜索框，后来发现它能写代码、能分析问题、能调用工具，甚至能自己完成一段任务。这种变化对我来说不是凑热闹看个新鲜，而是实打实地影响了我每天的工作方式。&lt;/p>
-&lt;p>我经历过几次很明显的认知转变。&lt;/p>
-&lt;p>&lt;strong>第一次：从 GPT 到 GPT4（2023 到 2024）。&lt;/strong>&lt;/p>
-&lt;p>一开始感觉就是它有常识了，能理解上下文了。很多过去需要经验积累和资料搜索才能完成的事情，变快了。比如当时帮老婆用 R 语言改她的程序，全靠 DeepSeek 和 GPT，我自己没写过 R 也能搞定。但复杂一点的代码它还是不行，那时候我完全不觉得它会替代程序员。&lt;/p>
-&lt;p>&lt;strong>第二次：DeepSeek R1（2025 年初）。&lt;/strong>&lt;/p>
-&lt;p>这一次变化更大。因为我看到的不是一个&amp;quot;有常识&amp;quot;的 AI，而是一个会思考的 AI。&lt;/p>
-&lt;p>当时有一个比较复杂的正则表达式，它不是简单给一个答案，而是会尝试、会走错、会回头、会换一种路径继续推。最后真的把问题解决了。&lt;/p>
-&lt;p>那一刻我就一个感觉：哇，这真能解决难题。从第一轮的&amp;quot;有常识&amp;quot;到这一轮的&amp;quot;会思考&amp;quot;，这个跨越比解决一个正则本身重要得多。不是觉得自己马上要被替代，而是突然意识到它进步得太快了，快到我很难想象再过一两年它会变成什么样。&lt;/p>
-&lt;p>&lt;strong>第三次：Agent 长了手（2025 年 9 月）。&lt;/strong>&lt;/p>
-&lt;p>这一回不是它更聪明了，而是它开始能动手了。我可以把一个任务交给它，它去服务器上跑命令、读日志、改代码、调试，然后回来告诉我结果。&lt;/p>
-&lt;p>从&amp;quot;我写代码，AI 辅助我&amp;quot;变成&amp;quot;我把任务交给它去做&amp;quot;。但那时候它还远远不让人放心，稍微长一点的任务就需要不断补 prompt、补上下文、让它先写 plan，再把跑偏的方向拉回来。&lt;/p>
-&lt;p>即使这样，我也已经感觉到：人可能真的可以越来越少亲自写代码了。&lt;/p>
-&lt;p>&lt;strong>第四次：Claude Opus 4.6 + skill 和 Agent 记忆（2025 年底到 2026）。&lt;/strong>&lt;/p>
-&lt;p>Claude 出了 Opus 4.6 之后，我感觉大模型像是迈过了一个奇点。它已经很像一个资深工程师了，能理解复杂意图，能在更长的上下文里保持方向。加上 skill（把固定步骤和经验沉淀成可复用的 prompt 脚本）和有长期记忆的 Agent，它不再是一个聪明但健忘的人了，而是有了经验和记忆，还带着工具箱。&lt;/p>
-&lt;p>真正让我心里一颤，是有一次开车的时候。一路都在想这些变化，脑子里突然冒出一个念头：以后可能真的不是靠写代码这件事维持生计了。&lt;/p>
-&lt;p>那一刻不是兴奋，也不是焦虑。更像是心跳漏了一拍。&lt;/p>
-&lt;p>因为我想到的不是一个具体的场景，不是&amp;quot;我会不会被替代&amp;quot;。而是一种更模糊的东西——我突然意识到，自己过去 17 年练出来的手艺，可能不再是最稀缺的东西了。不是说没用了，而是不够了。&lt;/p>
-&lt;p>所以我现在的做法变了。以前遇到问题，第一反应是打开编辑器。现在第一反应是把问题想清楚，然后交给 AI 去做。我花更多时间在&amp;quot;这件事该不该做&amp;quot;和&amp;quot;拆成几步给 AI&amp;quot;上，而不是&amp;quot;怎么实现&amp;quot;上。&lt;/p>
-&lt;p>说实话，这个转变还没完全适应。有时候 AI 写出来的代码我一眼就知道能更好，但我忍住了。不是偷懒，是发现如果我把时间花在&amp;quot;想清楚要什么&amp;quot;而不是&amp;quot;亲手写出来&amp;quot;上，结果反而更好。这个感觉，用了就回不去了。&lt;/p>
-&lt;p>写了这么多年代码之后，最真实的感受就一句话：不能再把写代码这件事当成自己的护城河了。得变。&lt;/p></description></item></channel></rss>
+&lt;p>After writing code for all these years, the most honest thing I can say comes down to one thing: I can&amp;rsquo;t keep treating coding as my moat. Things have to change.&lt;/p></description></item></channel></rss>
