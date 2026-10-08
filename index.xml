@@ -1,4 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 22 Sep 2026 19:19:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>珍惜时间、目标型 Agent 执行与工作流分解</title><link>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</link><pubDate>Tue, 22 Sep 2026 19:19:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</guid><description>&lt;p>最近越来越强烈地感觉到，人生的时间并不多。真正重要的事情，是用时间创作出一些东西，而不是把自己消耗在反复盯守、不断确认和看似忙碌的交互里。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 24 Sep 2026 13:03:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>部署服务、治理与 Agent 自主执行</title><link>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</link><pubDate>Thu, 24 Sep 2026 13:03:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</guid><description>&lt;p>最近终于把部署服务做通了。回头看，真正拖慢开发的并不是某一个命令，而是运行环境没有为 Agent 的持续执行做好准备。&lt;/p>
+&lt;h2 id="先解决环境再要求-agent-自主执行">先解决环境，再要求 Agent 自主执行&lt;/h2>
+&lt;p>过去每次修改后重新启动服务，都要反复输入管理员密码。多账号隔离本来是为了安全，却让部署过程被拆成一连串人工确认：查问题、绕过限制、再次输入密码，最后才能上线。&lt;/p>
+&lt;p>后来我把部署本身做成一个严格的服务：由管理员权限启动，但只负责部署这一件事。完成这个基础服务后，Agent 不再需要每一步都停下来等我输入密码，而是可以在配置好的环境里继续执行目标。&lt;/p>
+&lt;p>这让我更清楚地意识到，所谓“让 Agent 自主”，不是简单地对它说“自己完成”，而是提前把权限、工具、校验和流程配置好。环境不合适时，Agent 只能不断请求人工帮助；环境合适时，它才有可能持续工作到完成。&lt;/p>
+&lt;h2 id="治理要先于放权">治理要先于放权&lt;/h2>
+&lt;p>我的一个重要经验是：治理要尽早做。治理规则、权限边界、审计和门禁配置好之后，才可以相对放心地放开执行。&lt;/p>
+&lt;p>治理不是为了让 Agent 每一步都被拦住，而是为了让它在明确边界内少走弯路。只要限制合并、部署和高风险操作的规则足够清楚，再配合定期扫描和修复，就不必把所有注意力都花在实时盯守上。&lt;/p>
+&lt;p>因此比较合理的顺序是：先治理，再配置环境，最后把明确的目标交给 Agent。治理解决“能不能安全做”，环境解决“能不能顺利做”，目标则解决“要做成什么”。&lt;/p>
+&lt;h2 id="任务完成取决于四个因素">任务完成取决于四个因素&lt;/h2>
+&lt;p>一个任务最终能否完成，我现在倾向于从四个方面理解：模型本身的能力、初始上下文、动态环境，以及问题本身的难度。&lt;/p>
+&lt;p>初始上下文包括 prompt、skill 和任务说明；动态环境包括 Agent 能调用的工具、能检索的记忆、能看到的反馈，以及部署服务提供的执行条件。问题本身也有不同维度的难度：有的问题搜索空间很大，需要模型探索正确路径；有的问题只是步骤太多，需要被拆成多个阶段。&lt;/p>
+&lt;p>这意味着，提升 Agent 的效果不只是换更强的模型。还可以优化初始 prompt，清理和改善动态环境，把复杂问题拆解成更小的节点，并为常见流程提供必要的先验。&lt;/p>
+&lt;h2 id="workflow-是降低难度的工具">Workflow 是降低难度的工具&lt;/h2>
+&lt;p>复杂任务不适合一次性交给一个 Agent 从头做到尾。Workflow 的作用，是把大问题拆成多个阶段，让每个节点只处理更明确的一部分上下文和决策。&lt;/p>
+&lt;p>拆解不仅减少上下文长度，也会降低问题本身的难度。一个高级 Agent 可以先完成任务分解，再让不同节点分别执行、审计和验证。部分环节可以压缩成脚本，部分环节交给模型判断；节点之间通过门禁传递结果，减少幻觉和信息丢失。&lt;/p>
+&lt;p>因此，Workflow 并不是额外的形式主义，而是把原本很大的搜索空间切开，让模型在更小、更清晰的问题上发挥能力。&lt;/p>
+&lt;h2 id="从盯守转向目标驱动">从盯守转向目标驱动&lt;/h2>
+&lt;p>部署服务上线后，我感到最明显的变化是：不必无休止地和 Agent 交互，也不必假装忙碌地守在电脑前。更重要的工作，是明确目标、做好治理、配置环境，再让 Agent 放开去执行。&lt;/p>
+&lt;p>未来我希望把更多精力放在聊天开发和需求细节上，而不是反复指导每一个中间步骤。只要治理能够把系统拉回正确轨道，环境能够提供连续反馈，Agent 就应该被允许沿着目标持续推进。&lt;/p>
+&lt;p>最终的方向很简单：少一点人工盯守，多一点环境设计；少一点临时救火，多一点治理和 Workflow；让 Agent 不只是完成一次任务，而是在一个可靠的环境里持续把目标做完。&lt;/p></description></item><item><title>珍惜时间、目标型 Agent 执行与工作流分解</title><link>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</link><pubDate>Tue, 22 Sep 2026 19:19:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-22-goal-oriented-agent-execution/</guid><description>&lt;p>最近越来越强烈地感觉到，人生的时间并不多。真正重要的事情，是用时间创作出一些东西，而不是把自己消耗在反复盯守、不断确认和看似忙碌的交互里。&lt;/p>
 &lt;h2 id="从盯着-agent到配置一个能自己完成任务的环境">从盯着 Agent，到配置一个能自己完成任务的环境&lt;/h2>
 &lt;p>过去遇到自动化任务时，我常常担心它在某一步出错，于是给每个阶段加限制，自己守在电脑前不断输入管理员密码、确认下一步。结果任务没有真正持续执行，人的时间反而被切成了许多等待和干预的片段。&lt;/p>
 &lt;p>更合理的方式，是把部署、权限和工具配置成一个明确的环境，让一个服务只负责严格的部署动作，其他任务交给不同的 Agent 去完成。先设定目标，再设计一条能够持续运行的过程，让系统在我不在电脑前时也能继续工作，直到完成。&lt;/p>
@@ -862,24 +882,4 @@
 &lt;p>以前不是没想法，是从想法到文章到发布，成本太高了。光是坐在电脑前从零写起这一件事，就能把写文章的念头打消掉。现在龙虾（就是我的写作 Agent）把流程拆开、编排、自动化，还持续迭代优化。我只需要动动嘴皮子记录想法，重点花时间在飞书里审稿评论，改到满意，系统自动发布。&lt;/p>
 &lt;p>龙虾每天还在学习怎么写得更好。文风分析师的审稿 skill 在持续沉淀。发布管家的平台 reference 在不断更新。这些东西都在迭代，不是一次搭好就完事的。&lt;/p>
 &lt;hr>
-&lt;p>&lt;em>写于 2026 年 5 月。这篇文章本身，就是这条流水线的产物。&lt;/em>&lt;/p></description></item><item><title>I Wrote Code for 17 Years, Then AI Came</title><link>http://mayf3.github.io/post/2026-05-17-i-wrote-code-for-17-years-then-ai-came/</link><pubDate>Sun, 17 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-17-i-wrote-code-for-17-years-then-ai-came/</guid><description>&lt;p>I&amp;rsquo;ve been writing code for 17 years, and recently, for the first time, I felt with real clarity that I might not make writing code my core competitive advantage anymore.&lt;/p>
-&lt;p>AI has been changing too fast over the past few years. At first I treated it as a smarter search box. Then I found it could write code, analyze problems, call tools, even complete entire tasks on its own. For me, this wasn&amp;rsquo;t just exciting tech news — it changed how I work every single day.&lt;/p>
-&lt;p>I went through a few very clear shifts in how I saw things.&lt;/p>
-&lt;p>&lt;strong>First time: From GPT to GPT-4 (2023 to 2024).&lt;/strong>&lt;/p>
-&lt;p>My first impression was that it had common sense now. It could understand context. Things that used to require accumulated experience and searching through documentation suddenly got faster. For example, I helped my wife modify her R program entirely relying on DeepSeek and GPT — I&amp;rsquo;d never written R myself but still got it done. But it still struggled with complex code. Back then I didn&amp;rsquo;t think it would replace programmers at all.&lt;/p>
-&lt;p>&lt;strong>Second time: DeepSeek R1 (early 2025).&lt;/strong>&lt;/p>
-&lt;p>This was a bigger shift. What I saw wasn&amp;rsquo;t an AI that &amp;ldquo;had common sense&amp;rdquo; — it was an AI that could think.&lt;/p>
-&lt;p>There was a fairly complex regular expression. It didn&amp;rsquo;t just give an answer. It would try, get it wrong, backtrack, try a different approach, and keep going. And it actually solved it.&lt;/p>
-&lt;p>In that moment I had one feeling: wow, this can actually solve hard problems. The leap from &amp;ldquo;has common sense&amp;rdquo; to &amp;ldquo;can think&amp;rdquo; was far more important than solving one regex. I didn&amp;rsquo;t feel like I was about to be replaced. What hit me was how fast it was progressing — fast enough that I couldn&amp;rsquo;t imagine what it&amp;rsquo;d be like in another year or two.&lt;/p>
-&lt;p>&lt;strong>Third time: Agents got hands (September 2025).&lt;/strong>&lt;/p>
-&lt;p>This time it wasn&amp;rsquo;t about being smarter — it was about being able to act. I could hand a task to it, and it would go run commands on a server, read logs, modify code, debug, then come back and tell me the results.&lt;/p>
-&lt;p>It went from &amp;ldquo;I write code, AI assists me&amp;rdquo; to &amp;ldquo;I hand the task off and let it do the work.&amp;rdquo; But it was still far from reliable. Anything slightly long-running required constant prompt supplementation, context additions, making it write a plan first, then steering it back when it went off track.&lt;/p>
-&lt;p>Even so, I already sensed something: people might really be able to write less and less code themselves.&lt;/p>
-&lt;p>&lt;strong>Fourth time: Claude Opus 4.6 + skills and Agent memory (late 2025 to 2026).&lt;/strong>&lt;/p>
-&lt;p>After Claude released Opus 4.6, I felt like large language models had crossed a singularity. It was already very much like a senior engineer — able to understand complex intent, maintain direction across longer contexts. Add skills (essentially scripted prompts that codify fixed steps and experience) and Agents with long-term memory, and it was no longer a smart but forgetful assistant. It had experience, tools, and memory.&lt;/p>
-&lt;p>What really unsettled me was one time when I was driving. I was thinking about all these changes the whole way, and suddenly a thought popped into my head: I might really not be making a living by writing code anymore.&lt;/p>
-&lt;p>That moment wasn&amp;rsquo;t excitement, and it wasn&amp;rsquo;t anxiety. It was more like my heart missed a beat.&lt;/p>
-&lt;p>Because what I thought about wasn&amp;rsquo;t one particular scenario, not &amp;ldquo;will I be replaced.&amp;rdquo; It was something more vague — I suddenly realized that the craft I&amp;rsquo;d spent 17 years honing might no longer be the scarcest thing around. Not useless, just not enough.&lt;/p>
-&lt;p>So my approach has changed. Before, when I ran into a problem, my first instinct was to open the editor. Now my first instinct is to think the problem through clearly, then hand it to AI. I spend more time on &amp;ldquo;should this even be done&amp;rdquo; and &amp;ldquo;how to break it into steps for AI&amp;rdquo; than on &amp;ldquo;how to implement it.&amp;rdquo;&lt;/p>
-&lt;p>Honestly, I haven&amp;rsquo;t fully adapted to this shift yet. Sometimes AI writes code and I can see at a glance how to make it better, but I hold back. Not out of laziness — I&amp;rsquo;ve found that when I spend my time on &amp;ldquo;being clear about what I want&amp;rdquo; rather than &amp;ldquo;writing it myself,&amp;rdquo; the results are actually better. Once you&amp;rsquo;ve experienced that, there&amp;rsquo;s no going back.&lt;/p>
-&lt;p>After writing code for all these years, the most honest thing I can say comes down to one thing: I can&amp;rsquo;t keep treating coding as my moat. Things have to change.&lt;/p></description></item></channel></rss>
+&lt;p>&lt;em>写于 2026 年 5 月。这篇文章本身，就是这条流水线的产物。&lt;/em>&lt;/p></description></item></channel></rss>
