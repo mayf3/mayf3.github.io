@@ -1,4 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 24 Sep 2026 13:03:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>部署服务、治理与 Agent 自主执行</title><link>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</link><pubDate>Thu, 24 Sep 2026 13:03:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</guid><description>&lt;h1 id="治理先行给-agent-一个能持续执行的环境">治理先行：给 Agent 一个能持续执行的环境&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 10 Oct 2026 07:36:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>状态机、控制论和环境治理：重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</guid><description>&lt;p>最近越来越清楚地感觉到，Agent 系统真正的瓶颈不只是模型能力，也不只是某一个执行器是否足够主动，而是整个运行环境有没有被设计成一个可理解、可反馈、可持续迭代的系统。&lt;/p>
+&lt;h2 id="先承认执行质量并不稳定">先承认执行质量并不稳定&lt;/h2>
+&lt;p>有些管家型 Agent 在执行任务时会很快停下来，主动性不足，部署推进也因此变慢。遇到这类情况，不能把全部工作都寄托在单一的管家上；需要让更适合长程执行的 LLM 参与具体工作，同时保留原有的安全治理。&lt;/p>
+&lt;p>但安全治理本身也可能走向另一个极端：过度保护。一个系统如果对每个动作都设置过多阻碍，Agent 虽然更安全，却很难把事情做完。因此，治理不能只是不断增加限制，也应该定期检查哪些保护已经变成了不必要的摩擦，并在测试和审计后清理它们。&lt;/p>
+&lt;p>比较现实的方式，是一边治理、一边开发。功能继续推进，测试和审计持续补上；当某个保护规则阻碍了正常执行，就回到系统层面判断它是否合理，而不是临时绕过所有边界。&lt;/p>
+&lt;h2 id="多条工作流之后瓶颈回到了人">多条工作流之后，瓶颈回到了人&lt;/h2>
+&lt;p>通过飞书 CLI 派发消息、推进工作流，是一种很有价值的模式。手机端不必亲自完成每个动作，只需要和一个入口聊天，由它派发任务、跟踪状态，再把结果反馈回来。&lt;/p>
+&lt;p>但是当任务线路变多，人的脑力仍然会成为瓶颈。问题不再只是 Agent 能不能执行，而是人能不能快速理解各条线现在处于什么状态，并给出下一步反馈。如果系统把大量细节原样推给人，信息越多，反而越难推进。&lt;/p>
+&lt;p>因此，任务状态必须被翻译成人类容易理解的分类：当前在哪个阶段、下一步能做什么、依赖是什么、是否阻塞。只有状态信息足够清楚，人才能在多条工作流之间做出有效决策。&lt;/p>
+&lt;h2 id="用状态机表达任务进度">用状态机表达任务进度&lt;/h2>
+&lt;p>我越来越倾向于把 Agent 工作流理解成状态机。状态机回答的是：现在处于哪一步？在这个状态下允许执行什么行为？什么条件会触发下一次流转？&lt;/p>
+&lt;p>从这个角度看，Agent 的执行流程和传统程序并没有本质断裂。过去的程序是固定的 if/else 和顺序流转；Agent 则在这些节点中加入了判断和一定的随机性。它仍然需要沿着状态前进，只是节点内部不再完全由固定代码决定。&lt;/p>
+&lt;p>状态机的价值，是把这种不确定性放进明确的边界里。系统知道当前状态，也知道从当前状态可以走向哪里；Agent 可以在节点中寻找解法，但不能随意改变整个流程的语义。&lt;/p>
+&lt;h2 id="智能的一部分是把步骤压缩">智能的一部分，是把步骤压缩&lt;/h2>
+&lt;p>Agent 执行任务时，有些原本需要逐步展开的序列，经过反复运行后可以被压缩成更高层次的一步。发现规律、提炼规则、固化环境，本质上都是把多个重复步骤压缩成一个可复用的动作。&lt;/p>
+&lt;p>智能不仅是搜索更大的答案空间，也包括把已经理解的过程沉淀下来。压缩得越多，下一次执行就越不需要重新消耗上下文，系统也就能把注意力放到更高层的问题上。&lt;/p>
+&lt;p>这也是为什么不能只盯着单次任务的结果。每次 Agent 处理不好的内容，都应该被记录下来，反馈回环境，转化成更好的模块、规则或检查机制。下一次遇到类似问题时，系统就不必从头试错。&lt;/p>
+&lt;h2 id="用控制论改造运行环境">用控制论改造运行环境&lt;/h2>
+&lt;p>控制论和系统论提供了另一个重要视角：系统不是执行一次就结束，而是通过反馈不断修正自己。Agent 做出动作，环境返回结果；结果暴露出的偏差，再进入下一轮治理、模块化和流程设计。&lt;/p>
+&lt;p>因此，真正值得建设的不是一个只会接受命令的 Agent，而是一个能形成反馈闭环的环境。它能够知道哪里出错，知道哪些结果不可接受，也知道什么时候应该停止并交回人工。&lt;/p>
+&lt;p>代码架构中的模块化、工作流中的节点拆解、状态机中的流转条件，以及控制论中的反馈回路，实际上指向同一个目标：把复杂系统拆成可观察、可修正的部分。&lt;/p>
+&lt;h2 id="让-agent-在环境中寻找最优解">让 Agent 在环境中寻找最优解&lt;/h2>
+&lt;p>理想的运行环境不是放任 Agent 随意行动，也不是用无数人工确认把它锁死，而是把边界、工具、反馈和停止条件配置清楚。这样，即使 Agent 的智力足够强大，也不能越过环境的约束，只能在允许的范围内寻找更好的解法。&lt;/p>
+&lt;p>当环境能够自洽运行，失败能够反馈，规则能够迭代，Agent 才有可能真正完成自我迭代。人的角色也会随之变化：从不断盯着每一步，转向设计状态、环境和反馈机制。&lt;/p>
+&lt;p>现在还不一定已经产出了足够显性的成果，这会让人焦虑。但持续推进并不等于盲目等待。更重要的是让每一次尝试都沉淀为系统的一部分，最终把耐心转化为一个可运行、可验证、能够自己闭环的实际系统。&lt;/p></description></item><item><title>部署服务、治理与 Agent 自主执行</title><link>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</link><pubDate>Thu, 24 Sep 2026 13:03:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-09-24-deployment-governance-agent-autonomous-execution/</guid><description>&lt;h1 id="治理先行给-agent-一个能持续执行的环境">治理先行：给 Agent 一个能持续执行的环境&lt;/h1>
 &lt;p>过去一段时间，我一直被一个看似具体的问题拖住：每次修改功能、准备部署，都要反复输入管理员密码。多账号隔离和权限边界本来是为了安全，但如果部署路径没有被设计好，它就会让每一个小改动都变成一次漫长的手工操作。&lt;/p>
 &lt;p>这件事让我意识到，Agent 执行效率低，很多时候不只是模型不够聪明，而是它所处的环境没有为持续执行做好准备。真正值得问的不是“能不能让 Agent 自己做”，而是“有没有给它一个能持续做下去的环境”。&lt;/p>
 &lt;h2 id="一个完整的部署小案例">一个完整的部署小案例&lt;/h2>
@@ -846,57 +870,4 @@
 &lt;p>It wasn&amp;rsquo;t that I had no ideas before. It was that the cost from idea to article to publish was too high. Just the thought of sitting at a computer and writing from scratch was enough to kill the desire to write. Now the agents break down the process, orchestrate it, automate it, and continuously improve it. All I do is talk into my phone when I have an idea, spend some focused time in Feishu reviewing and commenting, edit until I&amp;rsquo;m satisfied, and the system publishes automatically.&lt;/p>
 &lt;p>The agents keep learning. The Writing Style Analyst&amp;rsquo;s review skill keeps accumulating knowledge. The Publishing Butler&amp;rsquo;s platform references are constantly updated. Everything keeps iterating. It&amp;rsquo;s not a one-time build.&lt;/p>
 &lt;hr>
-&lt;p>&lt;em>Written in May 2026. This article itself is a product of this pipeline.&lt;/em>&lt;/p></description></item><item><title>一篇文章的诞生：我的 AI Agent 协作流水线</title><link>http://mayf3.github.io/post/2026-05-23-ai-agent-collaboration-pipeline/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-23-ai-agent-collaboration-pipeline/</guid><description>&lt;h2 id="现在写文章我只做两件事">现在写文章，我只做两件事&lt;/h2>
-&lt;p>录随想，审稿。最后确认发布。&lt;/p>
-&lt;p>录随想是录一段语音。审稿是在飞书文档里看完成型的文章，逐段评论。确认发布是最后点一下。除此之外的活，选题、写稿、审阅、发布，都被一组 AI Agent 接走了。&lt;/p>
-&lt;p>我管这套流程叫&amp;quot;内容协作流水线&amp;quot;。它不是全自动的，是半自动的。&lt;/p>
-&lt;p>以前不是没有想法，是没有足够精力把想法变成稳定发布的文章。想写的东西攒了一堆，真要坐下来从零写到尾，光想想就累了。现在这套流程把成本压下来了，我才真正开始写。&lt;/p>
-&lt;p>到目前为止发了三篇，这篇是第四篇。这篇文章本身也是这条流水线的产物。&lt;/p>
-&lt;hr>
-&lt;h2 id="跑步时的灵感完整记录下来">跑步时的灵感，完整记录下来&lt;/h2>
-&lt;p>我有通过跑步思考问题的习惯。复杂问题在跑步的时候容易想清楚，灵感也经常在那个时候爆发。&lt;/p>
-&lt;p>跑步时想到什么，我会用豆包输入法。按一下进入语音模式，说一段，再按一下取消。有时候一条，有时候一口气录十几条。&lt;/p>
-&lt;p>这些录下来的东西我叫&amp;quot;随想&amp;quot;。不是正式笔记，不是大纲，就是脑子里冒出来的东西。有观点，有情绪，有例子，也有废话。&lt;/p>
-&lt;p>我把这些语音文字发给&amp;quot;随想记录员&amp;quot;。它是一个专门的 Agent，工作很简单：完整原样地把内容记录下来。不整理，不压缩，不评价。就是忠实保存。&lt;/p>
-&lt;p>为什么要专门调教一个&amp;quot;只记录不给建议&amp;quot;的 Agent？因为默认的 LLM 会忍不住给建议。有一次我吐槽说&amp;quot;今天代码写得特别顺&amp;quot;，随想记录员没忍住，在后面加了一句&amp;quot;建议你记录一下这次顺利的原因，以后可以复现&amp;quot;。我当场就炸了。我要的是记录，不是建议。我把这条规则加到 prompt 里：只记录，不评价，不给建议。后来就没再犯过。就是这类小细节，每个 Agent 都需要单独调教。&lt;/p>
-&lt;p>它有个做法我比较在意。记录完之后，它会回复我：总字数是多少，前 100 个字符是什么，后 100 个字符是什么，输出目录在哪。这样我能确认它真的记清楚了，不是假装记了其实没记。这个验证机制很重要，不然我后面写稿的时候发现内容丢失就晚了。&lt;/p>
-&lt;hr>
-&lt;h2 id="从随想到成文我没参与">从随想到成文：我没参与&lt;/h2>
-&lt;p>随想记录员记录完之后，后面的事全是自动的。&lt;/p>
-&lt;p>写作 Agent 有每天定时任务，会自动去拉取随想记录，分析哪些素材可以写成文章、应该拆成几篇、每篇核心内容是什么。然后直接开写，写完发到本地的文章管理平台。&lt;/p>
-&lt;p>我看到的就是最终成型的文章。中间不会来问我&amp;quot;这篇要不要写&amp;quot;&amp;ldquo;那个选题好不好&amp;rdquo;。&lt;/p>
-&lt;p>写作 Agent 还有个习惯：每天定时去学习怎么更好地写文章。它回顾之前的审稿意见，看哪些问题反复出现，然后改进自己的写作。算是留了一个自我迭代的口子。&lt;/p>
-&lt;p>这个阶段出来的文章质量参差不齐，但我不在初稿阶段介入。真正决定质量的是后面的审稿循环。&lt;/p>
-&lt;hr>
-&lt;h2 id="审稿三轮之后才飞书">审稿：三轮之后才飞书&lt;/h2>
-&lt;p>审稿环节我搭了一条夜间自动流水线（详见另文《夜间自动审稿流水线》）。&lt;/p>
-&lt;p>简单说就是：每天晚上自动审一轮，文风分析师给意见，写作 Agent 改，改完再审。三轮之后才上传飞书文档给我看。&lt;/p>
-&lt;p>审稿的核心是多模型双视角：文风分析师自己审一遍，然后让 ChatGPT 也重写一份作为参考。不同模型的关注点不一样，ChatGPT 的版本可以帮写作 Agent 跳出固定的写法。&lt;/p>
-&lt;p>三个轮次审完之后，文章状态变成&amp;quot;待确认&amp;quot;，这时候才上传飞书。&lt;/p>
-&lt;hr>
-&lt;h2 id="飞书文档到我出场了">飞书文档：到我出场了&lt;/h2>
-&lt;p>文章管理平台里审了三轮之后，才上传飞书文档。前几轮审稿都在本地完成，飞书只在作者亲自介入时用。&lt;/p>
-&lt;p>我在飞书里评论。不分开手机和电脑，手机上看整体感受，电脑上做大幅调整。看到哪段不舒服，直接在文档里点评论。审完之后，让文风分析师自己去飞书里拿评论结果。&lt;/p>
-&lt;p>一篇文章从初稿到我最终确认，大概需要一个星期。主要是因为我实在没有时间专门躺下来审稿，只能在碎片时间里看。大部分等待时间花在我身上，不是花在 Agent 处理上。&lt;/p>
-&lt;hr>
-&lt;h2 id="发布持续进化的工程活">发布：持续进化的工程活&lt;/h2>
-&lt;p>发布环节有个专门的 Agent，叫&amp;quot;发布管家&amp;quot;。它负责控制浏览器，像人一样操作网页：打开平台、登录、粘贴内容、上传图片、点击发布。&lt;/p>
-&lt;p>一开始每个平台都要跟发布管家来回交流，让它不断尝试，我也会去看发布效果。后来我让它也变成定时任务：每天晚上捞一下哪些文章还没发，然后一晚上连着 7 个小时持续往各平台发。一篇文章现在能发到十几个平台，中文的英文的都有。&lt;/p>
-&lt;p>发布管家有个特别的地方：它会自我进化。每次发布后，它会自己修改发布的 skill，主要是改 reference 文件。每个平台一个 reference，记录那个平台的怪癖和操作流程。发得越多，它对每个平台越熟。&lt;/p>
-&lt;p>这件事远不如看起来那么稳定。浏览器自动化面对的不是固定 API，而是随时可能变化的网页界面。第一篇在微信公众号发布时，就遇到一个大坑：代码块全部变成了普通文本，缩进全乱，图片被压缩到看不清。我花了半小时手动修复。后来发现是微信公众号的 Markdown 解析器对代码块的支持很差，发布管家记住了这个坑，每次发之前自动检查代码块格式，如果不行就转换成纯文本加格式标签。&lt;/p>
-&lt;p>还有更玄的。有的平台三天两头踢出登录，必须重新扫码；有的平台必须指定封面图，尺寸不对就拒绝发布；有的平台 Markdown 表格渲染不出来，得转成图片。发布管家能省很多时间，但还不能完全无人值守。&lt;/p>
-&lt;p>发布完之后，发布管家会记录每篇文章在每个平台的链接，自己打开发布后的页面检查排版效果。我也会去看一眼。&lt;/p>
-&lt;hr>
-&lt;h2 id="几篇文章暴露的问题">几篇文章暴露的问题&lt;/h2>
-&lt;p>这篇是第四篇。回顾这几篇的经历，有几个真实的问题。&lt;/p>
-&lt;p>Agent 生成的初稿经常有事实错误，编造没发生过的事、夸大数字、搞错流程。每篇都会遇到。这个问题只能靠多轮审稿加我亲自审来兜底。&lt;/p>
-&lt;p>审稿意见要沉淀。如果只说&amp;quot;帮我审稿&amp;quot;，Agent 会给一堆放哪都能用的建议。后来我把审稿标准写得很细：专门检查逻辑跳跃、AI 腔、空泛表达、事实准确性。文风分析师也维护着关于我风格的 skill，审得越多越准。&lt;/p>
-&lt;p>版本要系统化。前期靠文件目录结构规范，后来做了专门的写作发布平台来管理文章状态和版本。文章改几轮之后很容易乱，必须有一套系统。&lt;/p>
-&lt;p>发布自动化最脆弱。浏览器控制、平台 UI、登录态、预览检查，每一项都可能出问题。发布管家能省很多时间，但还不能完全无人值守。&lt;/p>
-&lt;hr>
-&lt;h2 id="写在最后">写在最后&lt;/h2>
-&lt;p>这套流程的核心价值就一个：把成本压下来。&lt;/p>
-&lt;p>以前不是没想法，是从想法到文章到发布，成本太高了。光是坐在电脑前从零写起这一件事，就能把写文章的念头打消掉。现在龙虾（就是我的写作 Agent）把流程拆开、编排、自动化，还持续迭代优化。我只需要动动嘴皮子记录想法，重点花时间在飞书里审稿评论，改到满意，系统自动发布。&lt;/p>
-&lt;p>龙虾每天还在学习怎么写得更好。文风分析师的审稿 skill 在持续沉淀。发布管家的平台 reference 在不断更新。这些东西都在迭代，不是一次搭好就完事的。&lt;/p>
-&lt;hr>
-&lt;p>&lt;em>写于 2026 年 5 月。这篇文章本身，就是这条流水线的产物。&lt;/em>&lt;/p></description></item></channel></rss>
+&lt;p>&lt;em>Written in May 2026. This article itself is a product of this pipeline.&lt;/em>&lt;/p></description></item></channel></rss>
