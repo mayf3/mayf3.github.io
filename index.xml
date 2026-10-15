@@ -1,4 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 10 Oct 2026 07:36:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>状态机、控制论和环境治理：重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</guid><description>&lt;p>最近越来越清楚地感觉到，Agent 系统真正的瓶颈不只是模型能力，也不只是某一个执行器是否足够主动，而是整个运行环境有没有被设计成一个可理解、可反馈、可持续迭代的系统。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 10 Oct 2026 07:36:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>智能的本质是压缩：用状态机和控制论重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</guid><description>&lt;p>最近我越来越觉得，Agent 系统的问题不能只归结为模型能力。有时执行器主动性不足，任务很快停下来；有时安全管家又过度保护，让部署推进变慢。真正需要重构的，是模型、治理、工作流和运行环境之间的关系。&lt;/p>
+&lt;h2 id="治理不能变成过度保护">治理不能变成过度保护&lt;/h2>
+&lt;p>安全治理当然重要，但保护规则也需要被反向检查。如果每个动作都被过多的确认和限制卡住，系统虽然看起来安全，却很难把事情做完。&lt;/p>
+&lt;p>更合理的方式是一边治理、一边开发：持续测试功能，也定期扫描哪些保护已经变成了不必要的摩擦，再在审计后清理它们。治理的目标不是让 Agent 什么都不能做，而是让它在边界内持续执行。&lt;/p>
+&lt;h2 id="多条任务线之后瓶颈回到了人">多条任务线之后，瓶颈回到了人&lt;/h2>
+&lt;p>通过消息工具派发任务、推进工作流，是一种很有价值的模式。人可以在手机端提出目标，由 Agent 派发任务并跟踪进度，而不是亲自执行每个动作。&lt;/p>
+&lt;p>但当任务线路变多，人的脑力会成为新的瓶颈。问题变成：我如何接收多条线的状态信息，又如何快速给出反馈？如果系统把所有细节原样推给人，信息越多，越难推进。&lt;/p>
+&lt;p>因此，状态信息必须被转换成人类容易理解的分类：当前处于哪一阶段、接下来可以做什么、依赖是什么、是否阻塞。只有这样，多条工作流才不会变成多条互相争夺注意力的消息流。&lt;/p>
+&lt;h2 id="状态机让复杂流程可理解">状态机让复杂流程可理解&lt;/h2>
+&lt;p>我认为，最适合表达 Agent 任务进度的模式可能就是状态机。状态机描述当前处于哪个状态，以及在这个状态下应该执行什么行为、什么条件会触发下一步流转。&lt;/p>
+&lt;p>从本质上说，Agent 的执行流程和传统程序并没有完全不同。传统程序沿着固定的 if/else 顺序流转；Agent 则在各个节点中加入自己的判断和一定的随机性。顺序流转仍然存在，只是节点内部变得更灵活，因而能够处理更复杂的工作。&lt;/p>
+&lt;p>状态机的价值，是把这种灵活性放在清晰的边界里。系统知道任务走到哪里，也知道当前状态允许哪些行为。Agent 可以在节点内部寻找解法，但不能随意改变整体流程。&lt;/p>
+&lt;h2 id="智能的一部分是把步骤压缩">智能的一部分，是把步骤压缩&lt;/h2>
+&lt;p>Agent 执行任务时，会发现一些可以复用的规律。原本需要逐步展开的一串动作，经过理解和沉淀后，可以被压缩成一个更高层次的动作。&lt;/p>
+&lt;p>我越来越倾向于把这种压缩看成智能的重要组成部分：把多个步骤压缩成一个步骤，把反复试错得到的经验反馈回环境，再把经验变成规则、模块或 Skill。压缩得越多，下一次执行时就越不需要重新消耗上下文，也就能把能力用于更复杂的问题。&lt;/p>
+&lt;p>因此，环境中那些 Agent 处理不好的内容，不应该只被当成一次失败。它们应当被记录下来，反馈回系统，推动架构、模块和工作流继续改进。&lt;/p>
+&lt;h2 id="用控制论形成反馈闭环">用控制论形成反馈闭环&lt;/h2>
+&lt;p>控制论和系统论提供了另一个重要视角：系统不是执行一次就结束，而是通过反馈不断修正自己。Agent 做出动作，环境返回结果；结果暴露出的偏差，再进入下一轮治理和设计。&lt;/p>
+&lt;p>代码架构中的模块化、工作流中的任务拆解、状态机中的流转条件，以及控制论中的反馈回路，实际上共同指向一个目标：让系统能够观察自己、修正自己，并逐步形成更好的正反馈。&lt;/p>
+&lt;p>这也解释了为什么应该把运行环境搭建好。环境足够清楚、边界足够稳定、反馈足够及时，即使 Agent 的智力变强，也只能在这个环境里寻找最优解法，而不能越过环境随意行动。&lt;/p>
+&lt;h2 id="让耐心沉淀为系统">让耐心沉淀为系统&lt;/h2>
+&lt;p>现在做了很多工作，却还没有形成足够显性的成果，这确实会让人揪心。支撑我继续推进的，是相信耐心本身可以产生复利，但耐心不能只是等待。&lt;/p>
+&lt;p>每一次执行、失败和修正，都应该沉淀为系统的一部分：更清楚的状态、更稳定的环境、更好的反馈和更少的重复劳动。最终要构建的，不是一个需要人不断盯守的 Agent，而是一个能够在约束中寻找解法、在反馈中持续迭代的系统。&lt;/p></description></item><item><title>状态机、控制论和环境治理：重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-state-machine-control-theory-agent-governance/</guid><description>&lt;p>最近越来越清楚地感觉到，Agent 系统真正的瓶颈不只是模型能力，也不只是某一个执行器是否足够主动，而是整个运行环境有没有被设计成一个可理解、可反馈、可持续迭代的系统。&lt;/p>
 &lt;h2 id="先承认执行质量并不稳定">先承认执行质量并不稳定&lt;/h2>
 &lt;p>有些管家型 Agent 在执行任务时会很快停下来，主动性不足，部署推进也因此变慢。遇到这类情况，不能把全部工作都寄托在单一的管家上；需要让更适合长程执行的 LLM 参与具体工作，同时保留原有的安全治理。&lt;/p>
 &lt;p>但安全治理本身也可能走向另一个极端：过度保护。一个系统如果对每个动作都设置过多阻碍，Agent 虽然更安全，却很难把事情做完。因此，治理不能只是不断增加限制，也应该定期检查哪些保护已经变成了不必要的摩擦，并在测试和审计后清理它们。&lt;/p>
@@ -826,48 +848,4 @@
 &lt;p>缺了软的，输出正确但没灵魂。缺了硬的，偶尔正确但随时翻车。缺了中间的，两头脱节。&lt;/p>
 &lt;p>编排从来不是一层的事情。&lt;/p>
 &lt;hr>
-&lt;p>&lt;em>下一篇：「什么时候该拆 Agent」——分裂不是模拟组织架构，是上下文过载的必然结果。&lt;/em>&lt;/p></description></item><item><title>How My AI Agent Content Pipeline Writes Articles for Me</title><link>http://mayf3.github.io/post/2026-05-23-ai-agent-content-pipeline-en/</link><pubDate>Sat, 23 May 2026 10:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-23-ai-agent-content-pipeline-en/</guid><description>&lt;h2 id="i-only-do-two-things-now">I Only Do Two Things Now&lt;/h2>
-&lt;p>Record thoughts. Review drafts. And finally click publish.&lt;/p>
-&lt;p>Recording thoughts means speaking into my phone. Reviewing means reading finished articles in Feishu documents and leaving comments paragraph by paragraph. Clicking publish is the very last step. Everything else — topic selection, writing, multi-round review, distribution — is handled by a team of AI agents.&lt;/p>
-&lt;p>I call this system the &amp;ldquo;Content Collaboration Pipeline.&amp;rdquo; It&amp;rsquo;s not fully automatic. It&amp;rsquo;s semi-automatic.&lt;/p>
-&lt;p>Before, I had plenty of ideas but not enough energy to turn them into consistently published articles. The sheer thought of sitting down and writing from scratch was exhausting. Now this pipeline has lowered the cost enough that I actually write.&lt;/p>
-&lt;p>Three articles have been published so far. This one is the fourth. It&amp;rsquo;s also a product of this same pipeline.&lt;/p>
-&lt;h2 id="ideas-from-running-captured-completely">Ideas From Running, Captured Completely&lt;/h2>
-&lt;p>I have a habit of thinking through complex problems while running. Ideas tend to hit during those moments.&lt;/p>
-&lt;p>When something comes to mind, I use an input method app on my phone. Push a button, start talking, push again to stop. Sometimes one short recording, sometimes a dozen in a row.&lt;/p>
-&lt;p>I call these &amp;ldquo;thought snippets.&amp;rdquo; They&amp;rsquo;re not formal notes or outlines. They&amp;rsquo;re whatever comes out of my head — opinions, emotions, examples, and plenty of filler.&lt;/p>
-&lt;p>I send these voice transcriptions to my &amp;ldquo;Thought Recorder&amp;rdquo; agent. Its job is simple: record everything faithfully, in its original form. No editing, no summarization, no commentary. Just preservation.&lt;/p>
-&lt;p>Why did I need to train a dedicated agent that only records without giving advice? Because default LLMs can&amp;rsquo;t resist offering suggestions. Once I complained &amp;ldquo;the code flowed really well today,&amp;rdquo; and the recorder couldn&amp;rsquo;t help adding, &amp;ldquo;You should note down why it went well so you can reproduce it.&amp;rdquo; I was furious. I wanted recording, not advice. I added this rule to the prompt: record only, no evaluation, no suggestions. It hasn&amp;rsquo;t happened since. These tiny details need separate tuning for every agent.&lt;/p>
-&lt;p>One thing I appreciate: after recording, it replies with the total word count, first 100 characters, last 100 characters, and the output directory. This way I can confirm it actually recorded correctly, not just pretended to. This verification mechanism matters — if I find content missing later while writing, it&amp;rsquo;d be too late.&lt;/p>
-&lt;h2 id="from-snippet-to-article-i-dont-participate">From Snippet to Article: I Don&amp;rsquo;t Participate&lt;/h2>
-&lt;p>After the Thought Recorder finishes, everything runs automatically.&lt;/p>
-&lt;p>The Writing Agent has a daily scheduled task. It pulls the latest thought snippets, analyzes which ones can become articles, decides how to split them, and drafts the core content for each piece. Then it writes directly and pushes the result to the local article review platform.&lt;/p>
-&lt;p>What I see is the finished draft. It never asks me &amp;ldquo;should I write this?&amp;rdquo; or &amp;ldquo;which topic should I pick?&amp;rdquo;&lt;/p>
-&lt;p>The Writing Agent also has a daily learning routine. It reviews past critique comments, identifies recurring issues, and improves its own writing. A self-iteration loop.&lt;/p>
-&lt;p>The quality of this initial draft varies, but I don&amp;rsquo;t intervene at this stage. What determines quality is the review cycle that follows.&lt;/p>
-&lt;h2 id="review-three-rounds-before-feishu">Review: Three Rounds Before Feishu&lt;/h2>
-&lt;p>I built an automated overnight review pipeline. Every night, one round of review runs automatically: the Writing Style Analyst reviews, the Writing Agent revises, then reviews again. After three rounds, the article gets uploaded to Feishu for me.&lt;/p>
-&lt;p>The core of the review process is a dual-model approach. The Writing Style Analyst reviews by itself, then has ChatGPT produce a separate version as reference. Different models catch different things. ChatGPT&amp;rsquo;s perspective helps the Writing Agent break out of its usual patterns.&lt;/p>
-&lt;p>After three rounds, the article status changes to &amp;ldquo;ready for confirmation.&amp;rdquo; Only then does it go to Feishu.&lt;/p>
-&lt;h2 id="feishu-document-my-turn">Feishu Document: My Turn&lt;/h2>
-&lt;p>After three rounds of review on the local platform, the article is uploaded to Feishu.&lt;/p>
-&lt;p>I leave comments in Feishu. I don&amp;rsquo;t switch between phone and computer — I read for overall feel on my phone, make substantial edits on my computer. When something feels off, I comment directly in the document. After reviewing, the Writing Style Analyst fetches my comments from Feishu on its own.&lt;/p>
-&lt;p>From first draft to my final confirmation, one article takes about a week. Mostly because I don&amp;rsquo;t have dedicated time to sit down and review — I can only do it in fragmented moments. Most of the waiting time is on me, not on the agents.&lt;/p>
-&lt;h2 id="publishing-an-engineering-problem-that-keeps-evolving">Publishing: An Engineering Problem That Keeps Evolving&lt;/h2>
-&lt;p>The publishing stage has a dedicated agent called the &amp;ldquo;Publishing Butler.&amp;rdquo; It controls a browser and operates websites like a human: opening platforms, logging in, pasting content, uploading images, clicking publish.&lt;/p>
-&lt;p>At first, every platform required back-and-forth communication with the Publishing Butler. Let it try, then check the results. Now it runs on a schedule: every night it scans for unpublished articles and spends 7 consecutive hours pushing them to multiple platforms. A single article goes to over a dozen platforms, both Chinese and English.&lt;/p>
-&lt;p>The Publishing Butler has a special trait: it self-evolves. After each publish, it updates its own publishing skill, mainly the reference files. One reference per platform, documenting that platform&amp;rsquo;s quirks and procedures. The more it publishes, the more familiar it becomes.&lt;/p>
-&lt;p>This is far less stable than it sounds. Browser automation doesn&amp;rsquo;t face fixed APIs — it faces web UIs that change without notice. The first WeChat article hit a major problem: code blocks turned into plain text, indentation was completely lost, and images were compressed into illegibility. I spent half an hour manually fixing it. The Publishing Butler learned the lesson and now automatically checks code block formatting before every publish.&lt;/p>
-&lt;p>There are even stranger issues. Some platforms log you out every few days and require re-scanning QR codes. Some require a cover image with exact dimensions or they reject the submission. Some platforms can&amp;rsquo;t render Markdown tables and need them converted to images. The Publishing Butler saves a lot of time, but it can&amp;rsquo;t run fully unattended yet.&lt;/p>
-&lt;p>After publishing, the Butler records links for each article on each platform, opens the published pages, and checks the layout. I also take a look.&lt;/p>
-&lt;h2 id="problems-that-surfaced-after-a-few-articles">Problems That Surfaced After a Few Articles&lt;/h2>
-&lt;p>Facts are often made up in initial drafts. Events that never happened, exaggerated numbers, wrong process descriptions. Every single article has this problem. The only fix is multi-round review plus my own reading.&lt;/p>
-&lt;p>Review feedback needs to accumulate. If you just say &amp;ldquo;review this,&amp;rdquo; agents return generic advice that could apply to anything. I later made the review criteria very specific: check for logical jumps, AI-speak, empty filler, and factual accuracy. The Writing Style Analyst maintains a style guide skill that gets more accurate with every round.&lt;/p>
-&lt;p>Version control needs a system. Early on, directory structure conventions were enough. Later I built a dedicated article review platform to manage state and versions. After several rounds of edits, things get messy fast without a proper system.&lt;/p>
-&lt;p>Publishing automation is the most fragile. Browser control, platform UIs, login states, preview checks — every link can break. The Publishing Butler saves time but can&amp;rsquo;t fully replace human oversight yet.&lt;/p>
-&lt;h2 id="in-the-end">In the End&lt;/h2>
-&lt;p>The core value of this entire pipeline is one thing: it lowered the cost.&lt;/p>
-&lt;p>It wasn&amp;rsquo;t that I had no ideas before. It was that the cost from idea to article to publish was too high. Just the thought of sitting at a computer and writing from scratch was enough to kill the desire to write. Now the agents break down the process, orchestrate it, automate it, and continuously improve it. All I do is talk into my phone when I have an idea, spend some focused time in Feishu reviewing and commenting, edit until I&amp;rsquo;m satisfied, and the system publishes automatically.&lt;/p>
-&lt;p>The agents keep learning. The Writing Style Analyst&amp;rsquo;s review skill keeps accumulating knowledge. The Publishing Butler&amp;rsquo;s platform references are constantly updated. Everything keeps iterating. It&amp;rsquo;s not a one-time build.&lt;/p>
-&lt;hr>
-&lt;p>&lt;em>Written in May 2026. This article itself is a product of this pipeline.&lt;/em>&lt;/p></description></item></channel></rss>
+&lt;p>&lt;em>下一篇：「什么时候该拆 Agent」——分裂不是模拟组织架构，是上下文过载的必然结果。&lt;/em>&lt;/p></description></item></channel></rss>
