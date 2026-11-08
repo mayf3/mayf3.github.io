@@ -1,4 +1,33 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 10 Oct 2026 07:36:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>智能的本质是压缩：用状态机和控制论重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</guid><description>&lt;p>最近我越来越觉得，Agent 系统的问题不能只归结为模型能力。有时执行器主动性不足，任务很快停下来；有时安全管家又过度保护，让部署推进变慢。真正需要重构的，是模型、治理、工作流和运行环境之间的关系。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Personal Agent、自进化与确定性—不确定性架构</title><link>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</link><pubDate>Wed, 04 Nov 2026 00:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</guid><description>&lt;h1 id="personal-agent自进化与确定性不确定性架构">Personal Agent、自进化与确定性—不确定性架构&lt;/h1>
+&lt;h2 id="引言问题不是模型够不够聪明">引言：问题不是“模型够不够聪明”&lt;/h2>
+&lt;p>Personal Agent 的难点，不只是让模型生成更好的答案，而是让一个具有不确定性的执行单元，在真实环境中持续完成任务、接受校验，并在出错后改进。更有用的工程问题是：哪些环节交给 Agent，哪些环节必须由确定性代码、规则和人工确认负责？&lt;/p>
+&lt;p>本文基于 2026-11-04 的随想素材，区分“素材中直接表达的观察”和“据此作出的工程化推论”，不把推论写成已验证事实。&lt;/p>
+&lt;h2 id="一agent-不是传统函数而是高不确定性执行单元">一、Agent 不是传统函数，而是高不确定性执行单元&lt;/h2>
+&lt;p>传统函数通常有明确输入、固定逻辑和可预期输出；Agent 则会理解意图、选择工具、规划步骤，并根据环境反馈调整行为。同一目标可能得到不同路径，调用工具也可能失败。因此，不能把 Agent 当作一个“更大的函数”直接替换进旧程序。&lt;/p>
+&lt;p>更合理的组合方式是：让 Agent 处理需要理解、判断和规划的部分，让确定性程序处理结构化、可验证、不可出错的部分。例如，Agent 可以提出计划或抽取信息；代码负责格式校验、权限检查、状态机推进和结果落盘。两者交替组合，比单纯追求一个全能 Agent 更容易控制风险。&lt;/p>
+&lt;h2 id="二环境设计比提示词堆叠更重要">二、环境设计比提示词堆叠更重要&lt;/h2>
+&lt;p>当 Agent 反复犯同一类错误时，继续增加提示词未必有效。可以改造它所处的环境：缩小可选动作范围，提供明确的工具契约，在关键节点加入校验和回读，把成功标准变成可观察的状态，并保留失败记录。&lt;/p>
+&lt;p>这意味着“让 Agent 变好”不一定等于训练一个更强的模型，也可以是改变任务分解、工具接口、反馈机制和权限边界。环境把隐含要求变成显式约束，能降低幻觉和误操作的代价。&lt;/p>
+&lt;h2 id="三多-agent-与-super-agent分工不是越多越好">三、多 Agent 与 Super Agent：分工不是越多越好&lt;/h2>
+&lt;p>多 Agent 的价值在于角色分工：不同 Agent 可以负责研究、写作、审核或执行，各自拥有更清晰的职责。但层级越多，协调成本、状态同步和责任追踪也越复杂。Super Agent 并不意味着一个无所不能的角色，更像是负责规划、分派、汇总和监督的协调层。&lt;/p>
+&lt;p>设计时应先问：这个角色是否有独立的上下文、权限或验收标准？如果没有，拆分可能只是增加通信开销。无论采用单 Agent 还是多 Agent，都需要明确谁启动任务、谁检查结果、谁有权推进状态，以及失败后如何回退。&lt;/p>
+&lt;h2 id="四自进化必须落到指标与回归测试">四、自进化必须落到指标与回归测试&lt;/h2>
+&lt;p>“自进化”不能只理解为 Agent 自己总结几句话。可复用的改进至少应包含：记录失败现象和上下文；定位是提示、工具、流程还是环境问题；提出改动；在相同或相近案例上回归验证；确认改动没有引入新的错误；最后再把经验沉淀为规则、技能或测试。&lt;/p>
+&lt;p>如果没有指标和回归测试，所谓进化可能只是换一种说法重复失败。可观测的状态、可比较的结果和可重放的案例，是让不确定系统逐渐可靠的基础。&lt;/p>
+&lt;h2 id="五从工作流到-personal-agent先做闭环再谈自主">五、从工作流到 Personal Agent：先做闭环，再谈自主&lt;/h2>
+&lt;p>工作流擅长确定性的节点推进：任务进入、条件判断、权限校验和状态转换都可以被记录。Personal Agent 擅长在节点内部处理开放性工作。两者结合时，工作流负责边界与交账，Agent 负责节点内的探索和执行。&lt;/p>
+&lt;p>因此，“自主”不应等同于不受监督。更现实的定义是：Agent 能自主规划和启动一段工作，但必须在可观测、可暂停、可回滚的环境中运行，并在需要时把问题交还给人。人工审阅不是系统失败，而是高风险内容发布前必要的控制点。&lt;/p>
+&lt;h2 id="结语把不确定性放在可控的位置">结语：把不确定性放在可控的位置&lt;/h2>
+&lt;p>Agent 工程的关键不是消灭不确定性，而是把不确定性放在适合它的位置：让它负责理解和探索，用确定性代码约束边界，用工作流记录状态，用指标和回归测试验证改进，用人工审阅守住高风险出口。&lt;/p>
+&lt;p>这条路线不承诺一次搭出完美的 Personal Agent。它提供的是一个可以逐步验证的工程闭环：观察问题，改造环境，组合 Agent 与确定性组件，测量结果，再根据证据迭代。本文仅形成供人工审阅的初稿，不自动发布到任何外部平台。&lt;/p>
+&lt;h2 id="自检清单">自检清单&lt;/h2>
+&lt;ul>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 覆盖 Agent 与传统函数、确定性与不确定性&lt;/li>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 覆盖环境设计、多 Agent 层级与 Super Agent&lt;/li>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 覆盖幻觉治理、指标化、回归测试与自进化&lt;/li>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 区分素材观察与工程化推论，未添加未经来源支持的个人经历&lt;/li>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 保留人工审阅，未自动发布&lt;/li>
+&lt;/ul></description></item><item><title>智能的本质是压缩：用状态机和控制论重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</guid><description>&lt;p>最近我越来越觉得，Agent 系统的问题不能只归结为模型能力。有时执行器主动性不足，任务很快停下来；有时安全管家又过度保护，让部署推进变慢。真正需要重构的，是模型、治理、工作流和运行环境之间的关系。&lt;/p>
 &lt;h2 id="治理不能变成过度保护">治理不能变成过度保护&lt;/h2>
 &lt;p>安全治理当然重要，但保护规则也需要被反向检查。如果每个动作都被过多的确认和限制卡住，系统虽然看起来安全，却很难把事情做完。&lt;/p>
 &lt;p>更合理的方式是一边治理、一边开发：持续测试功能，也定期扫描哪些保护已经变成了不必要的摩擦，再在审计后清理它们。治理的目标不是让 Agent 什么都不能做，而是让它在边界内持续执行。&lt;/p>
@@ -813,39 +842,4 @@
 &lt;p>有时候看到扣款通知，脑子里第一反应还是&amp;quot;又花钱了&amp;quot;。但很快会想起那个框架，然后切换视角：&amp;ldquo;这是运营成本&amp;quot;或者&amp;quot;这是投资预算&amp;rdquo;。&lt;/p>
 &lt;p>纠结的时间从3个小时降到了大概几分钟。这就是变化。&lt;/p>
 &lt;hr>
-&lt;p>&lt;em>本文基于与龙虾合伙人的真实对话整理。素材来源：2026-06-10、2026-06-11 随想记录。&lt;/em>&lt;/p></description></item><item><title>给 AI 搭脚手架：Agent 约束的三层体系</title><link>http://mayf3.github.io/post/2026-05-25-agent-constraints-three-layer-system/</link><pubDate>Mon, 25 May 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-05-25-agent-constraints-three-layer-system/</guid><description>&lt;p>大语言模型天生不靠谱。上一篇文章聊了为什么需要 Agent 编排。这篇聊编排的核心：怎么约束 Agent 的行为。&lt;/p>
-&lt;p>跑了大半年 Agent 系统，我最大的体会：&lt;strong>prompt 靠不住，体系才靠得住。&lt;/strong>&lt;/p>
-&lt;p>只靠 prompt 约束模型的输出，等于用劝说管理一个不稳定的系统。不是没用，是不够用。&lt;/p>
-&lt;p>那真正可靠的是什么？我总结了三层约束体系，从软到硬。越靠下越可靠。&lt;/p>
-&lt;h2 id="第一层软约束prompt角色设定原则说明">第一层：软约束：prompt、角色设定、原则说明&lt;/h2>
-&lt;p>这是最常用的手段。&lt;/p>
-&lt;p>写好 system prompt，告诉 Agent &amp;ldquo;你是资深编辑&amp;quot;&amp;ldquo;不要使用填充词&amp;quot;&amp;ldquo;遇到不确定的不要瞎编&amp;rdquo;。&lt;/p>
-&lt;p>有没有用？有用。但有多可靠？不保证。&lt;/p>
-&lt;p>举个例子：我在写作 Agent 的 prompt 里明确写了&amp;quot;不要用破折号&amp;rdquo;。结果它照样用，有时候一篇里冒出来七八个。你告诉它&amp;quot;输出不要超过 500 字&amp;rdquo;，它写 800 字。不是它故意不听，是 prompt 里塞了太多规则，中间的那些容易被忽略。&lt;/p>
-&lt;p>上一篇文章聊过这个问题：给模型 20 条规则，它会对中间的看心情。Prompt 对模型注意力的影响是概率性的，没有模型能把所有规则&amp;quot;同等对待&amp;quot;。&lt;/p>
-&lt;p>所以软约束的作用是&amp;quot;倾向性引导&amp;quot;，不是保障。&lt;/p>
-&lt;h2 id="第二层结构化约束task-cardschemachecklist">第二层：结构化约束：task card、schema、checklist&lt;/h2>
-&lt;p>这层就不是&amp;quot;建议&amp;quot;了，而是要求。&lt;/p>
-&lt;p>Task card 明确输入输出的格式。Schema 规定回复必须符合什么结构。Checklist 在生成后做一次格式化检查。&lt;/p>
-&lt;p>为什么这层比软约束更可靠？&lt;/p>
-&lt;p>因为格式本身就是一个检查点。如果要求 Agent 必须输出 JSON，格式不对系统直接重试。如果要求回复必须包含三个段落，缺一段它就自动补。如果要求 checklist 逐项打勾，没打的项系统会标记。&lt;/p>
-&lt;p>这不是概率性的。是确定性的。&lt;/p>
-&lt;p>大语言模型天生适合做&amp;quot;按照模板填充&amp;quot;的事情。给它一个结构化的槽位让它填，它犯错的概率远低于让它自由发挥。&lt;/p>
-&lt;p>比如我现在的写作 Agent：输出必须是&amp;quot;开头+问题+分析+观点+总结&amp;quot;的固定结构。看似死板，但结构性翻车确实少了很多。&lt;/p>
-&lt;h2 id="第三层硬约束skill平台状态机权限控制">第三层：硬约束：skill、平台状态机、权限控制&lt;/h2>
-&lt;p>到了这一层，已经不是在&amp;quot;劝&amp;quot;模型了。是流程上堵死绕过的可能。&lt;/p>
-&lt;p>Skill 脚本是对单个 Agent 行为的硬限制。Agent 能调用哪些工具、能访问哪些数据、能执行哪些操作，都由 Skill 定义了范围。想越界？没有对应的工具。想跳过步骤？流程脚本不给你这个选项。&lt;/p>
-&lt;p>平台状态机管的是多 Agent 之间的流转。一个写作 Agent 可以自由写稿，但它写完后必须经过审稿 Agent，否则不能进入发布。想跳过？平台直接拦。&lt;/p>
-&lt;p>这不是教模型&amp;quot;你应该怎么做&amp;quot;。这是规定&amp;quot;你只能这么做&amp;quot;。&lt;/p>
-&lt;p>就像写代码时的类型系统。TypeScript 不是在&amp;quot;劝&amp;quot;你变量类型要对，它是编译阶段就报错。&lt;/p>
-&lt;p>硬约束的质量取决于你能把流程抽象到什么程度。流程越清晰，硬约束越准确。&lt;/p>
-&lt;h2 id="三层一起用缺一不可">三层一起用，缺一不可&lt;/h2>
-&lt;p>既然硬约束最可靠，前两层是不是多余？&lt;/p>
-&lt;p>不是。因为三层各管各的事。&lt;/p>
-&lt;p>软约束能传递目标和品味。你可以用 prompt 告诉 Agent &amp;ldquo;写口语化一点&amp;quot;&amp;ldquo;像和朋友聊天&amp;rdquo;。这些东西没法写进状态机，但它决定了输出的质感。&lt;/p>
-&lt;p>硬约束保证底线。工具权限、流程卡点、状态流转，这些确保 Agent 不会做出格的事。&lt;/p>
-&lt;p>结构化约束在中间，把软约束的&amp;quot;意图&amp;quot;翻译成硬约束能检查的&amp;quot;格式&amp;rdquo;。&lt;/p>
-&lt;p>缺了软的，输出正确但没灵魂。缺了硬的，偶尔正确但随时翻车。缺了中间的，两头脱节。&lt;/p>
-&lt;p>编排从来不是一层的事情。&lt;/p>
-&lt;hr>
-&lt;p>&lt;em>下一篇：「什么时候该拆 Agent」——分裂不是模拟组织架构，是上下文过载的必然结果。&lt;/em>&lt;/p></description></item></channel></rss>
+&lt;p>&lt;em>本文基于与龙虾合伙人的真实对话整理。素材来源：2026-06-10、2026-06-11 随想记录。&lt;/em>&lt;/p></description></item></channel></rss>
