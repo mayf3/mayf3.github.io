@@ -1,4 +1,31 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 04 Nov 2026 00:00:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Personal Agent、自进化与确定性—不确定性架构</title><link>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</link><pubDate>Wed, 04 Nov 2026 00:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</guid><description>&lt;h1 id="personal-agent自进化与确定性不确定性架构">Personal Agent、自进化与确定性—不确定性架构&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>My Home</title><link>http://mayf3.github.io/</link><description>Recent content on My Home</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Thu, 05 Nov 2026 00:00:00 +0800</lastBuildDate><atom:link href="http://mayf3.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Personal Agent：把不确定性纳入架构的自进化方法</title><link>http://mayf3.github.io/post/2026-11-05-personal-agent-self-evolution/</link><pubDate>Thu, 05 Nov 2026 00:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-11-05-personal-agent-self-evolution/</guid><description>&lt;h1 id="personal-agent把不确定性纳入架构的自进化方法">Personal Agent：把不确定性纳入架构的自进化方法&lt;/h1>
+&lt;h2 id="开头agent-的问题不是像不像函数">开头：Agent 的问题不是“像不像函数”&lt;/h2>
+&lt;p>传统软件习惯把能力封装成函数：输入明确、逻辑可重复、输出可校验。Personal Agent 不同，它需要理解自然语言、判断上下文、选择工具并规划多步行动，结果天然带有不确定性。&lt;/p>
+&lt;p>这并不意味着 Agent 不能工程化。相反，关键是把 Agent 当作一种可约束、可观察、可复用的执行单元，再用确定性组件把它放进可靠的工作流。&lt;/p>
+&lt;h2 id="一agent-函数化约束接口而不是假装确定">一、Agent 函数化：约束接口，而不是假装确定&lt;/h2>
+&lt;p>Agent 可以被“函数化使用”，但不应被误认为传统函数。工程上要先定义输入边界、输出格式、可调用工具和失败处理，再给它一个清晰的任务单元。Agent 负责理解和探索，代码负责校验、状态转换、权限和落盘。&lt;/p>
+&lt;p>这是一种混合架构：不确定性用于处理开放问题，确定性用于守住硬边界。对于无法接受模糊结果的步骤，必须增加结构化输出、格式验证和回读确认。&lt;/p>
+&lt;h2 id="二确定性门禁与环境改造">二、确定性门禁与环境改造&lt;/h2>
+&lt;p>单靠提示词很难消除幻觉。更有效的做法是改造 Agent 所处的环境：减少不必要的选择，限制工具权限，提供明确的契约，在关键节点放置确定性门禁，并让结果可以被追踪和重放。&lt;/p>
+&lt;p>门禁不必把所有工作变成规则。它只需要守住高风险边界，例如身份、权限、状态版本、外部发布和不可逆操作。这样既保留模型的泛化能力，又降低错误穿透系统的概率。&lt;/p>
+&lt;h2 id="三自进化不是写一段总结">三、自进化不是“写一段总结”&lt;/h2>
+&lt;p>自进化必须有证据链。一次可靠的改进至少包括：记录失败现象；保留当时的输入、上下文和动作；判断根因属于模型、提示、工具、流程还是环境；提出一项具体修改；用历史案例或回归测试验证；确认没有引入新的副作用。&lt;/p>
+&lt;p>如果只有“下次注意”，而没有可比较的指标和可重放案例，系统并没有真正学会。可以观察任务成功率、人工返工率、错误类型分布、重试次数或流程耗时，但指标必须服务于实际目标，不能为了数字而优化数字。&lt;/p>
+&lt;h2 id="四多-agent弱-session-与-super-agent">四、多 Agent、弱 Session 与 Super Agent&lt;/h2>
+&lt;p>当任务复杂度超出单个 Agent 的注意力范围，多 Agent 可以按职责拆分：研究、规划、执行和审核分别拥有更窄的上下文与权限。弱 Session 则意味着不依赖一段无限延续的对话，而是把关键状态落到外部可读、可恢复的记录中。&lt;/p>
+&lt;p>Super Agent 更适合被理解为协调层：负责拆解任务、选择执行者、汇总结果、发现异常并决定是否升级，而不是亲自完成一切。层级越多，协调成本越高，因此只有在职责、权限或验收标准真正不同的时候才值得拆分。&lt;/p>
+&lt;h2 id="五停止搭建开始沉淀作品">五、停止搭建，开始沉淀作品&lt;/h2>
+&lt;p>素材中的另一个提醒是：系统可以不断变复杂，但复杂本身不是产出。已有的配音、写稿、视频和分享能力，应该优先沉淀为具体作品并持续发布；新的基础设施只有在能缩短反馈周期、降低重复劳动或提高质量时才值得加入。&lt;/p>
+&lt;p>这也是自进化的现实检验：不是系统声称自己更强，而是下一次真实任务是否更快、更稳、更少返工。外部发布仍应保留人工审阅，未经确认不能自动把草稿变成公开内容。&lt;/p>
+&lt;h2 id="结语把不确定性放在可控位置">结语：把不确定性放在可控位置&lt;/h2>
+&lt;p>Personal Agent 的工程路线不是消灭不确定性，而是安排它出现的位置：让 Agent 负责理解、规划和探索，让确定性代码负责校验和状态，让工作流负责边界和交账，让指标与回归测试推动改进，让人在高风险出口保留最终确认权。&lt;/p>
+&lt;p>这条路线把“自主”从一句口号变成可验证的闭环：观察、约束、执行、测量、回归，再迭代。本文仅为基于指定 daily-thoughts 素材形成的人工审阅草稿，不自动发布。&lt;/p>
+&lt;h2 id="自检">自检&lt;/h2>
+&lt;ul>
+&lt;li>覆盖 Agent 函数化、确定性门禁、环境改造、自进化指标化、多 Agent、弱 Session 与 Super Agent。&lt;/li>
+&lt;li>明确区分素材中的观点与工程化推导，没有补写未经来源支持的经历。&lt;/li>
+&lt;li>保留人工审阅，未自动发布外部内容。&lt;/li>
+&lt;/ul></description></item><item><title>Personal Agent、自进化与确定性—不确定性架构</title><link>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</link><pubDate>Wed, 04 Nov 2026 00:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</guid><description>&lt;h1 id="personal-agent自进化与确定性不确定性架构">Personal Agent、自进化与确定性—不确定性架构&lt;/h1>
 &lt;h2 id="引言问题不是模型够不够聪明">引言：问题不是“模型够不够聪明”&lt;/h2>
 &lt;p>Personal Agent 的难点，不只是让模型生成更好的答案，而是让一个具有不确定性的执行单元，在真实环境中持续完成任务、接受校验，并在出错后改进。更有用的工程问题是：哪些环节交给 Agent，哪些环节必须由确定性代码、规则和人工确认负责？&lt;/p>
 &lt;p>本文基于 2026-11-04 的随想素材，区分“素材中直接表达的观察”和“据此作出的工程化推论”，不把推论写成已验证事实。&lt;/p>
@@ -784,62 +811,4 @@
 &lt;p>代价呢？烧 token。每一次理解、判断、决策都在消耗 token，这比执行预设脚本更贵。但你换来的是——你只需要做一个决定：知道自己要什么。&lt;/p>
 &lt;h2 id="我在赌的方向">我在赌的方向&lt;/h2>
 &lt;p>回到开头。宝宝说想折纸，我只给 Agent 发了一句话。&lt;/p>
-&lt;p>这可能是我对 Agent 最大的赌注：&lt;strong>中间步骤会被消灭，&amp;ldquo;我要&amp;quot;会成为新的交互界面。&lt;/strong>&lt;/p></description></item><item><title>四笔账：一个技术人的金钱观升级</title><link>http://mayf3.github.io/post/2026-06-12-four-accounts-money-mindset/</link><pubDate>Fri, 12 Jun 2026 08:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-06-12-four-accounts-money-mindset/</guid><description>&lt;h1 id="四笔账一个技术人的金钱观升级">四笔账：一个技术人的金钱观升级&lt;/h1>
-&lt;p>我花了3个小时对比各个 token 套餐的价格。&lt;/p>
-&lt;p>就是每月200来块钱的事。但那天晚上我打开一个又一个服务商页面，比较配置、算折扣、算哪个月切换最划算。算完快凌晨一点了，其他什么也没干。&lt;/p>
-&lt;p>然后我把这笔账讲给我的龙虾合伙人听（一个专门看宏观方向的 AI Agent）。&lt;/p>
-&lt;p>他说了一句话，把我3个小时的纠结直接击穿了——&lt;/p>
-&lt;p>&lt;strong>&amp;ldquo;你有没有算过你的时薪？&amp;rdquo;&lt;/strong>&lt;/p>
-&lt;h2 id="天平左边放错了东西">天平左边放错了东西&lt;/h2>
-&lt;p>我当时想的很直白：左边放着200块，右边想着&amp;quot;这200块如果不花，还能用来吃饭、买日用品&amp;quot;。我一直在拿物质世界的其他东西和这笔支出做比较。&lt;/p>
-&lt;p>省一点是一点嘛。&lt;/p>
-&lt;p>但他给了另一个思路。他把天平右边的东西换掉了——不是换另一个商品，而是放上我的时间。&lt;/p>
-&lt;blockquote>
-&lt;p>&amp;ldquo;这个东西能不能节省你一个小时的工作？如果能，你每月花200块省了好几个小时，纯赚。&amp;rdquo;&lt;/p>
-&lt;/blockquote>
-&lt;p>突然意识到一个事实：花了3个小时纠结一个每月值200块的东西。光是纠结的时间，就已经超过了一年能省的钱。&lt;/p>
-&lt;p>这背后是一种思维惯性：&lt;strong>我一直在用&amp;quot;省钱&amp;quot;的逻辑思考，而不是&amp;quot;赚钱&amp;quot;的逻辑。&lt;/strong>&lt;/p>
-&lt;p>省钱的人看支出：花出去就没了。
-赚钱的人看支出：花出去换来了什么。&lt;/p>
-&lt;p>同一笔钱，归到不同的账上，心理预期完全不同。&lt;/p>
-&lt;h2 id="四笔账四个心理预期">四笔账，四个心理预期&lt;/h2>
-&lt;p>还是拿&amp;quot;买 token 套餐&amp;quot;这个例子来说。每月几百块，用来跑 AI agent 帮我处理日常事务。&lt;/p>
-&lt;h3 id="第一笔账成本项">第一笔账：成本项&lt;/h3>
-&lt;p>这是我以前的默认模式。&lt;/p>
-&lt;p>把买 token 当成买一瓶水、一顿饭一样的支出。花了就没了。省一点是一点。&lt;/p>
-&lt;p>在这种心态下，每笔消费都在想&amp;quot;能不能不花&amp;quot;。结果花大量时间找免费替代品、对比价格、等折扣。&lt;/p>
-&lt;p>200块的套餐？我先想想这200块还能干啥。&lt;/p>
-&lt;h3 id="第二笔账省时收益">第二笔账：省时收益&lt;/h3>
-&lt;p>龙虾合伙人让我换了一个角度：把它当成时薪的换算。&lt;/p>
-&lt;p>每月200块。我的时薪是多少？如果200块比我一个小时赚得少，而这个套餐每个月能帮我省不止一个小时。那它不是在花钱，是在赚钱。&lt;/p>
-&lt;p>还有一笔隐形成本：纠结本身消耗的心智。不用再比价、不用再想着&amp;quot;这个月要不要续&amp;quot;。&lt;strong>省掉纠结的时间，也是收益。&lt;/strong>&lt;/p>
-&lt;p>到了这一层，决策很简单：算数学题就行。&lt;/p>
-&lt;h3 id="第三笔账运营成本">第三笔账：运营成本&lt;/h3>
-&lt;p>再往上走一层。&lt;/p>
-&lt;p>公司买电脑，不会算&amp;quot;这台电脑能帮我赚多少钱&amp;quot;。它是必要的工具，不买就没法干活。这是运营成本。&lt;/p>
-&lt;p>token 套餐对我来说也是运营成本。我想用 AI agent 搭建系统、提升效率，这是基础工具。木匠不会纠结要不要买锤子。&lt;/p>
-&lt;p>到了这一层，连算都不用算了。必要的支出，不需要理由。&lt;/p>
-&lt;h3 id="第四笔账投资预算">第四笔账：投资预算&lt;/h3>
-&lt;p>这一层对我的冲击最大。&lt;/p>
-&lt;p>他说：你应该每月划出一笔固定金额，当作&amp;quot;个人成长基金&amp;quot;。这笔钱的目标不是省下来，而是&lt;strong>花出去&lt;/strong>。&lt;/p>
-&lt;p>没花完怎么办？说明你没有真正在投资自己。&lt;/p>
-&lt;p>这个逻辑和前面三层完全不同。前面三层，多多少少还在想&amp;quot;要不要花&amp;quot;。到了投资预算这一层，想的是&amp;quot;怎么花&amp;quot;：怎么把钱变成认知、技能、效率的提升。&lt;/p>
-&lt;p>他举了个例子：给小孩报兴趣班，你会想着&amp;quot;这笔钱能不能省&amp;quot;吗？不会。那是教育投资。那为什么对自己的投资就要省？&lt;/p>
-&lt;p>在那之前，我脑子里根本没有&amp;quot;投资自己&amp;quot;这回事。&lt;/p>
-&lt;h2 id="分账之后纠结少了">分账之后，纠结少了&lt;/h2>
-&lt;p>四笔账是思维方式，实操中我简化成了四个账户。&lt;/p>
-&lt;p>知道这些之后我做了一个很具体的事：把支出按类型分开。&lt;/p>
-&lt;ul>
-&lt;li>运营成本：token、服务器、工具订阅。不纠结，该花就花。&lt;/li>
-&lt;li>投资预算：每月固定一笔，用来学习、试错、买认知。目标是花完。&lt;/li>
-&lt;li>日常生活：吃饭、日用品。正常花。&lt;/li>
-&lt;li>大额决策：超过一定金额的，单独评估。&lt;/li>
-&lt;/ul>
-&lt;p>分完之后最明显的变化不是花了多少钱，而是&lt;strong>纠结变少了&lt;/strong>。运营成本不需要犹豫，投资预算想着怎么花好。脑子不用再纠结这些，可以去想更重要的事。&lt;/p>
-&lt;p>还有一个副作用：我开始定期复盘这些钱的分布。这500花在这边值不值？那800花在那边有没有更好的去处？复盘逼着我去想&amp;quot;投资回报率&amp;quot;，而不是只盯着余额。&lt;/p>
-&lt;h2 id="还在修炼">还在修炼&lt;/h2>
-&lt;p>说实话，知道不等于做到。&lt;/p>
-&lt;p>有时候看到扣款通知，脑子里第一反应还是&amp;quot;又花钱了&amp;quot;。但很快会想起那个框架，然后切换视角：&amp;ldquo;这是运营成本&amp;quot;或者&amp;quot;这是投资预算&amp;rdquo;。&lt;/p>
-&lt;p>纠结的时间从3个小时降到了大概几分钟。这就是变化。&lt;/p>
-&lt;hr>
-&lt;p>&lt;em>本文基于与龙虾合伙人的真实对话整理。素材来源：2026-06-10、2026-06-11 随想记录。&lt;/em>&lt;/p></description></item></channel></rss>
+&lt;p>这可能是我对 Agent 最大的赌注：&lt;strong>中间步骤会被消灭，&amp;ldquo;我要&amp;quot;会成为新的交互界面。&lt;/strong>&lt;/p></description></item></channel></rss>
