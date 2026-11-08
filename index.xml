@@ -24,7 +24,7 @@
 &lt;ul>
 &lt;li>覆盖 Agent 函数化、确定性门禁、环境改造、自进化指标化、多 Agent、弱 Session 与 Super Agent。&lt;/li>
 &lt;li>明确区分素材中的观点与工程化推导，没有补写未经来源支持的经历。&lt;/li>
-&lt;li>保留人工审阅，未自动发布外部内容。&lt;/li>
+&lt;li>保留人工审阅，现已通过 GitHub 发布。&lt;/li>
 &lt;/ul></description></item><item><title>Personal Agent、自进化与确定性—不确定性架构</title><link>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</link><pubDate>Wed, 04 Nov 2026 00:00:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-11-04-personal-agent-self-evolution/</guid><description>&lt;h1 id="personal-agent自进化与确定性不确定性架构">Personal Agent、自进化与确定性—不确定性架构&lt;/h1>
 &lt;h2 id="引言问题不是模型够不够聪明">引言：问题不是“模型够不够聪明”&lt;/h2>
 &lt;p>Personal Agent 的难点，不只是让模型生成更好的答案，而是让一个具有不确定性的执行单元，在真实环境中持续完成任务、接受校验，并在出错后改进。更有用的工程问题是：哪些环节交给 Agent，哪些环节必须由确定性代码、规则和人工确认负责？&lt;/p>
@@ -53,7 +53,7 @@
 &lt;li>&lt;input checked="" disabled="" type="checkbox"> 覆盖环境设计、多 Agent 层级与 Super Agent&lt;/li>
 &lt;li>&lt;input checked="" disabled="" type="checkbox"> 覆盖幻觉治理、指标化、回归测试与自进化&lt;/li>
 &lt;li>&lt;input checked="" disabled="" type="checkbox"> 区分素材观察与工程化推论，未添加未经来源支持的个人经历&lt;/li>
-&lt;li>&lt;input checked="" disabled="" type="checkbox"> 保留人工审阅，未自动发布&lt;/li>
+&lt;li>&lt;input checked="" disabled="" type="checkbox"> 保留人工审阅，现已通过 GitHub 发布&lt;/li>
 &lt;/ul></description></item><item><title>智能的本质是压缩：用状态机和控制论重构 Agent 系统</title><link>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</link><pubDate>Sat, 10 Oct 2026 07:36:00 +0800</pubDate><guid>http://mayf3.github.io/post/2026-10-10-intelligence-is-compression-state-machine-control-theory-agent/</guid><description>&lt;p>最近我越来越觉得，Agent 系统的问题不能只归结为模型能力。有时执行器主动性不足，任务很快停下来；有时安全管家又过度保护，让部署推进变慢。真正需要重构的，是模型、治理、工作流和运行环境之间的关系。&lt;/p>
 &lt;h2 id="治理不能变成过度保护">治理不能变成过度保护&lt;/h2>
 &lt;p>安全治理当然重要，但保护规则也需要被反向检查。如果每个动作都被过多的确认和限制卡住，系统虽然看起来安全，却很难把事情做完。&lt;/p>
